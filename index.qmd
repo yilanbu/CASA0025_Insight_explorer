@@ -8,7 +8,7 @@ This application initially uses the Soil-Adjusted Vegetation Index (SAVI) to ide
 
 ### Problem Statement 
 
-Quickly find and locate new Israeli settlements. These settlements were often outposts in early times, characterized by newly reclaimed and exposed plots of land.
+The aim of this application is to use satellite imagery to find and mark all Israeli outposts and emerging settlements within the West Bank. For target users, they can quickly query the location and number of these newly emerged territorial encroachments.
 
 ### End User 
 
@@ -24,10 +24,10 @@ Harmonized Sentinel-2 MSI: MultiSpectral Instrument, Level-2A.
 
 ### Methodology
 
-① Land Cover Classification(Random Forest), Feature Selection(NDVI, SAVI) 
-② Change detection
-③ Morphological Analysis, Area and Shape Filtering
-④ Classification(Support Vector Machine, Random Forest)
+- Land Cover Classification(Random Forest), Feature Selection(NDVI, NDBI, SAVI) 
+- Change detection
+- Morphological Analysis, Area and Shape Filtering
+- Classification(Support Vector Machine, Random Forest)
 
 ### Interface
 
