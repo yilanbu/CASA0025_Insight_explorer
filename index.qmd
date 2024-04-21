@@ -6,27 +6,35 @@ Fill in the sections below to provide a brief summary of your project. Each sect
 
 ### Problem Statement 
 
-What is the problem you’re trying to address using this application? 
+Quickly find and locate new Israeli settlements. These settlements were often outposts in early times, characterized by newly reclaimed and exposed plots of land.
 
 ### End User 
 
-Who are you building this application for? How does it address a need this community has?
+Journalists, researchers and international organizations. 
+
+Israeli settlements are illegal. Usually when settlements develop to a certain scale, Israel will declare them legal. Early detection can help the international community intervene earlier. Some reporters did a manual blanket search through Google Earth. We hope this helps them resolve the issue quickly.
 
 ### Data
 
-What data are you using? 
+Harmonized Sentinel-2 MSI: MultiSpectral Instrument, Level-2A.
+
+Related shp files for the Palestinian Israel area.
+<iframe src=' https://data.humdata.org/event/opt-israel-hostilities/?ext_geodata=1&q=&sort=last_modified%20desc&ext_page_size=25# ' width='100%' height='700px'></iframe>
 
 ### Methodology
 
-How are you using this data to address the problem?
+① Land Cover Classification(Random Forest), Feature Selection(NDVI, SAVI) 
+② Change detection
+③ Morphological Analysis, Area and Shape Filtering
+④ Classification(Support Vector Machine, Random Forest)
 
 ### Interface
 
-How does your application's interface work to address the needs of your end user?
+The main function is to provide relevant points to help users quickly locate the latest settlements or outposts. Users can select point options and a specific year to obtain the target position for that year. We also provide quantitative statistics and line charts to help users understand their changing trends.
+
+Additionally, users can select other options such as West Bank borders, Palestinian-controlled areas, Israeli-controlled areas, etc. We also provide layers of some analysis processes to help users better understand the working principle of the application. Users can freely view these layers, such as SAVI analysis results, etc.
 
 ## The Application 
-
-Replace the link below with the link to your application.
 
 :::{.column-page}
 
