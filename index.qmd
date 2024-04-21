@@ -4,6 +4,7 @@
 
 Fill in the sections below to provide a brief summary of your project. Each section should have no more than 100 words. Do not edit any of the headings.
 
+
 ### Problem Statement 
 
 Quickly find and locate new Israeli settlements. These settlements were often outposts in early times, characterized by newly reclaimed and exposed plots of land.
