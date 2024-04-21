@@ -2,8 +2,9 @@
 
 ## Project Summary 
 
-Fill in the sections below to provide a brief summary of your project. Each section should have no more than 100 words. Do not edit any of the headings.
+In the West Bank of the Jordan River, Israel continues to encroach on Palestinian land by establishing illegal outposts, transforming them into settlements, and eventually legalizing them. The objective of this application is to detect these outposts and early settlements. Many journalists and researchers hope to mitigate the situation of Palestinian victimization through early intervention and raise public awareness about the status of Palestine beyond Gaza. However, they often manually search for these targets on satellite images. We hope to help them quickly locate these targets through this application.
 
+This application initially uses the Soil-Adjusted Vegetation Index (SAVI) to identify target land types, then employs change detection to identify newly cultivated land plots that appear each year. These plots include changes in desert areas and minor agricultural land developments. Therefore, it is necessary to use graphic filtering to select plots of specific areas and shapes, and subsequently pinpoint their central locations. Finally, we attempt to distinguish whether these plots belong to Israel through machine learning.
 
 ### Problem Statement 
 
@@ -19,8 +20,7 @@ Israeli settlements are illegal. Usually when settlements develop to a certain s
 
 Harmonized Sentinel-2 MSI: MultiSpectral Instrument, Level-2A.
 
-Related shp files for the Palestinian Israel area.
-<iframe src=' https://data.humdata.org/event/opt-israel-hostilities/?ext_geodata=1&q=&sort=last_modified%20desc&ext_page_size=25# ' width='100%' height='700px'></iframe>
+[Related shp files for the Palestinian Israel area](https://data.humdata.org/event/opt-israel-hostilities/?ext_geodata=1&q=&sort=last_modified%20desc&ext_page_size=25#)
 
 ### Methodology
 
@@ -39,7 +39,7 @@ Additionally, users can select other options such as West Bank borders, Palestin
 
 :::{.column-page}
 
-<iframe src=' https://ee-casa0025insightexplorers.projects.earthengine.app/view/test ' width='100%' height='700px'></iframe>
+<iframe src=' https://ee-casa0025insightexplorers.projects.earthengine.app/view/insightexplorers ' width='100%' height='700px'></iframe>
 
 :::
 ## How it Works 
