@@ -152,7 +152,8 @@ window.Quarto = {
 <h1>Initial Project</h1>
 <section id="project-summary" class="level2">
 <h2 class="anchored" data-anchor-id="project-summary">Project Summary</h2>
-<p>Fill in the sections below to provide a brief summary of your project. Each section should have no more than 100 words. Do not edit any of the headings.</p>
+<p>In the West Bank of the Jordan River, Israel continues to encroach on Palestinian land by establishing illegal outposts, transforming them into settlements, and eventually legalizing them. The objective of this application is to detect these outposts and early settlements. Many journalists and researchers hope to mitigate the situation of Palestinian victimization through early intervention and raise public awareness about the status of Palestine beyond Gaza. However, they often manually search for these targets on satellite images. We hope to help them quickly locate these targets through this application.</p>
+<p>This application initially uses the Soil-Adjusted Vegetation Index (SAVI) to identify target land types, then employs change detection to identify newly cultivated land plots that appear each year. These plots include changes in desert areas and minor agricultural land developments. Therefore, it is necessary to use graphic filtering to select plots of specific areas and shapes, and subsequently pinpoint their central locations. Finally, we attempt to distinguish whether these plots belong to Israel through machine learning.</p>
 <section id="problem-statement" class="level3">
 <h3 class="anchored" data-anchor-id="problem-statement">Problem Statement</h3>
 <p>Quickly find and locate new Israeli settlements. These settlements were often outposts in early times, characterized by newly reclaimed and exposed plots of land.</p>
@@ -165,7 +166,7 @@ window.Quarto = {
 <section id="data" class="level3">
 <h3 class="anchored" data-anchor-id="data">Data</h3>
 <p>Harmonized Sentinel-2 MSI: MultiSpectral Instrument, Level-2A.</p>
-<p>Related shp files for the Palestinian Israel area. <iframe src=" https://data.humdata.org/event/opt-israel-hostilities/?ext_geodata=1&amp;q=&amp;sort=last_modified desc&amp;ext_page_size=25# " width="100%" height="700px"></iframe></p>
+<p><a href="https://data.humdata.org/event/opt-israel-hostilities/?ext_geodata=1&amp;q=&amp;sort=last_modified%20desc&amp;ext_page_size=25#">Related shp files for the Palestinian Israel area</a></p>
 </section>
 <section id="methodology" class="level3">
 <h3 class="anchored" data-anchor-id="methodology">Methodology</h3>
@@ -180,13 +181,12 @@ window.Quarto = {
 <section id="the-application" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="the-application">The Application</h2>
 <div class="column-page">
-<iframe src=" https://ee-casa0025insightexplorers.projects.earthengine.app/view/test " width="100%" height="700px">
+<iframe src=" https://ee-casa0025insightexplorers.projects.earthengine.app/view/insightexplorers " width="100%" height="700px">
 </iframe>
 </div>
 </section>
 <section id="how-it-works" class="level2">
 <h2 class="anchored" data-anchor-id="how-it-works">How it Works</h2>
-<p>Use this section to explain how your application works using code blocks and text explanations (no more than 500 words excluding code):</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="bu">Map</span><span class="op">.</span><span class="fu">setCenter</span>(<span class="fl">35.51898</span><span class="op">,</span> <span class="fl">33.90153</span><span class="op">,</span> <span class="dv">15</span>)<span class="op">;</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="bu">Map</span><span class="op">.</span><span class="fu">setOptions</span>(<span class="st">"satellite"</span>)<span class="op">;</span></span>
