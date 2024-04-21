@@ -30,7 +30,7 @@ Replace the link below with the link to your application.
 
 :::{.column-page}
 
-<iframe src='https://ollielballinger.users.earthengine.app/view/turkey-earthquake' width='100%' height='700px'></iframe>
+<iframe src=' https://ee-casa0025insightexplorers.projects.earthengine.app/view/test ' width='100%' height='700px'></iframe>
 
 :::
 ## How it Works 
