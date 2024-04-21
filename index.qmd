@@ -8,6 +8,8 @@ This application initially uses the Soil-Adjusted Vegetation Index (SAVI) to ide
 
 ### Problem Statement 
 
+The hot war in Gaza is well known in the Israeli-Palestinian conflict, but the slow erosion of the West Bank has received little attention. Therefore, we hope to use this application to help relevant users quickly obtain real-time changes in Israel’s occupation of Palestine.
+
 The aim of this application is to use satellite imagery to find and mark all Israeli outposts and emerging settlements within the West Bank. For target users, they can quickly query the location and number of these newly emerged territorial encroachments.
 
 ### End User 
