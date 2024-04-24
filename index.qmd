@@ -1,4 +1,4 @@
-# Israeli settlement identification in the West Bank
+# Israeli Settlement Identification in the West Bank
 
 ## Project Summary 
 
@@ -46,7 +46,10 @@ Additionally, users can select other options such as West Bank borders, Palestin
 :::
 ## How it Works 
 
+### Part 1: (Soil Adjusted Vegetation Index) SAVI
+
 First, we extract satellite images from Sentinel-2 and filtering out cloud-obscured ones. These images are then subjected to machine learning analysis to identify surface features such as roads, farmland, forests, cities, and bare land. Various feature collections are imported to provide essential geographical context, including West Bank borders, Palestinian and Israeli-Palestinian control areas, and points indicating illegal appropriation. 
+
 ```js
 // Import West Bank borders.
 var westbank = ee.FeatureCollection("projects/ee-casa0025insightexplorers/assets/WestBankBorder");
@@ -58,7 +61,6 @@ var areaA = ee.FeatureCollection("projects/ee-casa0025insightexplorers/assets/ar
 var areaB = ee.FeatureCollection("projects/ee-casa0025insightexplorers/assets/areaB");
 
 var redpoint=ee.FeatureCollection("projects/ee-casa0025insightexplorers/assets/illegal_appropriation")
-
 
 // Date range.
 var start='2023-04-01';
@@ -92,7 +94,6 @@ var westbank_settings = {
 
 Map.addLayer(westbank, westbank_settings, 'West Bank Border');
 
-
 // Study area.
 var study_area = areaA.merge(areaB);
 var study_geometry = study_area.union().geometry();
@@ -100,7 +101,6 @@ var buffered_geometry = study_geometry.buffer(200);
 
 Map.addLayer(buffered_geometry, {color: 'yellow'}, 'Study Area',false);
 ```
-
 
 Two crucial functions are defined: one calculates the Soil Adjusted Vegetation Index (SAVI), and the other retrieves yearly Sentinel-2 images for analysis over time.
 
@@ -197,7 +197,12 @@ for (var i = 2017; i < 2023; i++) {
 
 ```
 
+
+### Part 3: Change filter
+
+
 This section is specifically designed to screen, monitor, and analyze areas where the Soil Adjustment Vegetation Index (SAVI) has decreased over several consecutive years. It starts by identifying areas between adjacent years where the SAVI value has decreased, in order to determine regions of vegetation loss, especially those transitioning from above 0.2 in SAVI to below 0.2. After these changes are identified, the code applies specific filtering functions to exclude smaller patches, thereby reducing noise and errors to ensure the reliability and accuracy of the results. The filtered areas are displayed in red on the map for direct visualization and analysis. Moreover, the code vectorizes these areas and extracts centroids highlighted in yellow, which are crucial for further geospatial analysis. Ultimately, these centroids and areas are added to the map.
+
 
 ```js
 //  ---------------------------Part 4: Change filter ---------------------------
@@ -294,11 +299,157 @@ Map.addLayer(centroidLayers[2021], {color: 'yellow'}, 'Centroids 2021-2022');
 Map.addLayer(centroidLayers[2022], {color: 'yellow'}, 'Centroids 2022-2023');
 ```
 
+
+### Part 4: Use Machine Learning to Identify the Building Clusters of Israel
+
+In this part, we innovatively propose using machine learning to identify Israel building clusters.
+
+Firstly, let's conduct a preliminary land screening on the West Bank of the Jordan River.
+
+
+```js
+// Pre-Processing
+
+// Calculate GLCM
+var glcm=sentinel.toUint16().select('B8').glcmTexture({size: 4})
+
+// Calculate NDWI
+var ndwi=sentinel.normalizedDifference(['B3','B8'])
+                  .select(['nd'],['ndwi']);
+                  
+// Calculate NDVI                 
+var ndvi=sentinel.normalizedDifference(['B8','B4'])
+                  .select(['nd'],['ndvi']);
+
+// Calculate NDBI                 
+var ndbi=sentinel.normalizedDifference(['B11','B8'])
+                  .select(['nd'],['ndbi']);
+                  
+// Clip the map
+var westbankborder = sentinel.clip(westbank);
+
+// Update the mask
+var westbank_image= westbankborder
+                  .updateMask(ndwi.lt(0.3))
+                  .updateMask(ndvi.lt(0.2))
+                  .updateMask(ndbi.gt(0.1))
+                  .addBands(glcm)
+                  .addBands(ndbi)
+                  .select(bands);
+                  
+// Display the results
+Map.centerObject(westbank, 8);  // Center the map on the certain area with an appropriate zoom level
+Map.addLayer(westbank_image, {bands: ['B4', 'B3', 'B2'], max: 2000}, 'westbankborder');
+```
+
+Then, we manually annotated Israeli and Palestinian building clusters. During this process, we made an unexpected discovery that the newly developed lands were developed by Israel, and due to resource constraints, it would be impossible for Palestine to engage in new land excavation. To enhance precision, we also marked desert areas due to the difficulty in distinguishing them from buildings using the NDVI and NDBI.
+
+Therfore, we divided three classes:
+Class 1: is Israel building clusters
+Class 2: is Palestinian building clusters
+Class3: is the desert areas
+
+
+```js
+// Generating Labeled Data
+
+// Take random samples of points from within these polygons
+
+// Take points in each polygon
+var points_in_Israeli = mergedAreas1235.map(function(feature) {
+  return ee.FeatureCollection.randomPoints(feature.geometry(), 250)
+  .map(function(point) {
+    return point.set({'class': 0});
+ });
+}).flatten();
+
+var points_outside_Israeli = Outside_Israeli.map(function(feature) {
+  return ee.FeatureCollection.randomPoints(feature.geometry(), 400)
+  .map(function(point) {
+    return point.set({'class': 1});
+ });
+}).flatten();
+
+var desert_points = Desert_Areas.map(function(feature) {
+  return ee.FeatureCollection.randomPoints(feature.geometry(), 1080)
+  .map(function(point) {
+    return point.set({'class': 2});
+  });
+}).flatten();
+
+// Create one feature collection
+var Israeli_points = ee.FeatureCollection([points_in_Israeli,
+                                  points_outside_Israeli,
+                                  desert_points
+                                  ])
+                                  .flatten()
+                                  .randomColumn();    
+                                  
+// Create a sample dataset from the merged marked area
+var split=0.7
+var training_samples = Israeli_points.filter(ee.Filter.lt('random', split));
+var validation_sample = Israeli_points.filter(ee.Filter.gte('random', split));
+
+// Obtain training set
+var training = westbank_image.sampleRegions({
+  collection: training_samples,
+  properties: ['class'],
+  scale: 10,
+});
+
+// Obtain validation set
+var validation = westbank_image.sampleRegions({
+  collection: validation_sample,
+  properties: ['class'],
+  scale: 10
+});
+
+// Select classification features and training classifiers
+var model = ee.Classifier.smileRandomForest(500)
+                         .train(training, 'class');
+
+print('Training class 0:', training_samples.filter(ee.Filter.eq('class', 0)).size());
+print('Training class 1:', training_samples.filter(ee.Filter.eq('class', 1)).size());
+print('Training class 2:', training_samples.filter(ee.Filter.eq('class', 2)).size());
+print('Validation class 0:', validation_sample.filter(ee.Filter.eq('class', 0)).size());
+print('Validation class 1:', validation_sample.filter(ee.Filter.eq('class', 1)).size());
+print('Validation class 2:', validation_sample.filter(ee.Filter.eq('class', 2)).size());
+
+// Make prediction
+var prediction = westbank_image.classify(model);
+
+// Select Israeli architectural complex
+var Israeli_prediction=prediction.updateMask(prediction.eq(0));
+
+// Add layer
+Map.addLayer(Israeli_prediction, {palette:'red'}, 'Predicted Israeli Architectural Complex');
+
+// Validate the model with the validation dataset and classify the samples
+var validated = validation.classify(model);
+
+// Compute the error matrix for the validation results to assess the accuracy
+var testAccuracy = validated.errorMatrix('class', 'classification');
+
+// Print the confusion matrix to the console for evaluation
+print('Confusion Matrix ', testAccuracy);
+```
+
+The model's accuracy is quite high, at around 90%. In detail, the model performs best when predicting desert regions, followed by Israeli building clusters. Confusion primarily occurs between Israeli and Palestinian building clusters, as well as between Israeli building clusters and desert regions.
+
+All in all, the model shows potential in identifying Israeli building clusters. By combining historical Israel's exploitation of vacant land and identifying Israel based on historical data, illegal encroachments can be identified. 
+
+
+### Part 5: Create UI Panel
+
+
 This code segment primarily establishes and configures a user interface (UI) panel for interactively displaying and managing map layers. The panel allows users to select from various map layers such as "West Bank Border," "SAVI" (Soil Adjusted Vegetation Index), "Change Detection," and "Predicted Israeli Architectural Complex" through a dropdown menu. The interface updates the displayed map layers and associated information based on the user's selection.
 
 Additionally, the panel includes a slider for selecting years, which influences the displayed content of map layers, such as SAVI indices or change detection results. Moreover, the panel supports the display of additional control elements like information buttons and year labels, which are displayed conditionally depending on the currently selected map layer.
 
 There's also an information panel used to display more detailed descriptions or data, such as error matrices. These controls are dynamically managed through written functions, such as showing and hiding specific controls, updating map layers, or handling map click events, thereby enhancing user interaction.
+
+![UI Panel](images/UI-1.png)
+![UI Panel](images/UI-2.png)
 
 ```js
 // ---------------------------Part 5: create UI Panel---------------------------
