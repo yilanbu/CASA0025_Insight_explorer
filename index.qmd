@@ -87,7 +87,19 @@ Additionally, users can select other options such as "West Bank Border", "Contro
 :::
 
 
+
 ## How it Works 
+
+
+```js
+// The workflow of this application is clearly step-by-step, making it possible to distribute tasks evenly and reasonably. 
+
+// The entire application development is divided into five parts, and each member is responsible for one part.
+
+// In the exploration process, some of the ineffective methods were not reflected in the final application. In order to reflect the contribution of each member, the comments in subsequent code blocks will describe what the members are responsible for and what is not reflected.
+
+// Manual annotation for machine learning is completed by the group.
+```
 
 
 ### Part 1: (Soil Adjusted Vegetation Index) SAVI
@@ -97,6 +109,14 @@ First, we extract satellite images from _Sentinel-2_ and filtering out cloud-obs
 
 
 ```js
+// ---------------------------------------------------------------------------------
+// Beginning of part1
+// Developed by Mingyu Bi 
+// Unreflected workload includes attempts to classify land based on RF
+// ---------------------------------------------------------------------------------
+
+
+
 // Import West Bank borders.
 var westbank = ee.FeatureCollection("projects/ee-casa0025insightexplorers/assets/WestBankBorder");
 
@@ -148,9 +168,14 @@ var buffered_geometry = study_geometry.buffer(200);
 Map.addLayer(buffered_geometry, {color: 'yellow'}, 'Study Area',false);
 ```
 
-Two crucial functions are defined: one calculates the Soil Adjusted Vegetation Index (SAVI), and the other retrieves yearly Sentinel-2 images for analysis over time.
+
+
+For the purpose of machine learning training in part 4, we need to increase the amount of data, so two functions are defined: one calculates SAVI, and the other retrieves yearly Sentinel-2 images for analysis over time.
+
 
 ```js
+// ---------------------------Create functions.---------------------------
+
 // Function for calculating SAVI.
 function SAVI(image) {
   // Clip area.
@@ -189,11 +214,17 @@ function YearlyImages(startYear, endYear, dateSuffix, bands) {
   }
 
   return yearly_sentinel_images;
+}
 ```
 
-These yearly images are iterated over, with the SAVI function applied to each, and the resulting bare land distribution is visualized on the map, offering insights into land use changes.
+
+
+Apply the function to obtain year-by-year images and calculate SAVI. The results are organized into a dictionary for easy call in the next step.
+
 
 ```js
+// ---------------------------Apply the function.---------------------------
+
 // Create yearly images.
 var sentinel_2017_2023 = YearlyImages(2017, 2023, '-04-01', bands);
 
@@ -203,7 +234,7 @@ var keys = sentinel_2017_2023.keys();
 keys.getInfo().forEach(function(key) {
   var image = ee.Image(sentinel_2017_2023.get(key));
   var savi_image = SAVI(image);
-  savi_2017_2023 = savi_2017_2023.set(key, savi_image);// savi_2015_2023 is the dictionary for Change detection.
+  savi_2017_2023 = savi_2017_2023.set(key, savi_image); // savi_2017_2023 is the dictionary for Change detection.
 });
 
 // Visualization.
@@ -218,11 +249,29 @@ keys.getInfo().forEach(function(key) {
   var savi_image = ee.Image(savi_2017_2023.get(key));
   Map.addLayer(savi_image, visParams, 'SAVI_' + key,false);
 });
+
+// ---------------------------------------------------------------------------------
+// End of part1
+// ---------------------------------------------------------------------------------
 ```
 
-Additionally, a function called calculateChange is defined, which computes differences in bare land between consecutive years, aiding in identifying new roads or settlements. This function iterates from 2017 to 2022, analyzing each yearly pair and visualizing the changes for deeper understanding.
+
+
+### Part 2: Change detection
+
+Then, a function called calculateChange is defined, which computes differences in bare land between consecutive years, aiding in identifying new roads or settlements. This function iterates from 2017 to 2023, analyzing each yearly pair and visualizing the changes for deeper understanding.
+
+The SAVI analysis result obtained in the previous step is a binary image, so among various methods, direct difference can obtain the best result.
 
 ```js
+// ---------------------------------------------------------------------------------
+// Beginning of part2
+// Developed by Xiaolin Liu
+// Unreflected workload includes T-test on different satellite images sets or analysis results
+// ---------------------------------------------------------------------------------
+
+
+
 // Function to calculate change between two images
 function calculateChange(image1, image2, year1, year2) {
   // Calculate the difference between the two images
@@ -241,17 +290,30 @@ for (var i = 2017; i < 2023; i++) {
   calculateChange(image1, image2, i, i + 1);
 }
 
+// ---------------------------------------------------------------------------------
+// End of part2
+// ---------------------------------------------------------------------------------
 ```
 
 
 ### Part 3: Change filter
 
 
-This section is specifically designed to screen, monitor, and analyze areas where the Soil Adjustment Vegetation Index (SAVI) has decreased over several consecutive years. It starts by identifying areas between adjacent years where the SAVI value has decreased, in order to determine regions of vegetation loss, especially those transitioning from above 0.2 in SAVI to below 0.2. After these changes are identified, the code applies specific filtering functions to exclude smaller patches, thereby reducing noise and errors to ensure the reliability and accuracy of the results. The filtered areas are displayed in red on the map for direct visualization and analysis. Moreover, the code vectorizes these areas and extracts centroids highlighted in yellow, which are crucial for further geospatial analysis. Ultimately, these centroids and areas are added to the map.
+In part 2, subtraction will capture the appearance and disappearance of bare land at the same time. Therefore, this section is specifically designed to screen, monitor, and analyze areas where the Soil Adjustment Vegetation Index (SAVI) has decreased over several consecutive years. It starts by identifying areas between adjacent years where the SAVI value has decreased, in order to determine regions of vegetation loss, especially those transitioning from above 0.2 in SAVI to below 0.2. 
+
+After these changes are identified, the code applies specific filtering functions to exclude smaller patches, thereby reducing noise and errors to ensure the reliability and accuracy of the results. The filtered areas are displayed in red on the map for direct visualization and analysis. Moreover, the code vectorizes these areas and extracts centroids highlighted in yellow, which are crucial for further geospatial analysis. Ultimately, these centroids and areas are added to the map.
 
 
 ```js
-//  ---------------------------Part 4: Change filter ---------------------------
+// ---------------------------------------------------------------------------------
+// Beginning of part3
+// Developed by Xinyu Guo, Yilan Bu 
+// Yilan Bu: Optimized the change detection step so that the acquired image is one-way (bare ground appears) and filter
+// Xinyu Guo: Filter and extract the center point of the target geometry
+// ---------------------------------------------------------------------------------
+
+
+
 // Filter out small patches based on connected pixel size.
 function filterSmallPatches(image, minPixels) {
   var connected = image.connectedPixelCount();
@@ -286,8 +348,6 @@ function compareAndFilterYearlySAVI(yearlyImages, startYear, endYear, minPixels)
 
 // Apply the function to compare and filter SAVI across years and visualize changes.
 compareAndFilterYearlySAVI(savi_2017_2023, 2017, 2023, 100);
-
-
 
 // Function to compare SAVI between two consecutive years, identify changes, filter small patches, and extract centroids.
 function compareFilterAndExtractCentroids(yearlyImages, startYear, endYear, minPixels) {
@@ -343,17 +403,31 @@ Map.addLayer(centroidLayers[2019], {color: 'yellow'}, 'Centroids 2019-2020');
 Map.addLayer(centroidLayers[2020], {color: 'yellow'}, 'Centroids 2020-2021');
 Map.addLayer(centroidLayers[2021], {color: 'yellow'}, 'Centroids 2021-2022');
 Map.addLayer(centroidLayers[2022], {color: 'yellow'}, 'Centroids 2022-2023');
+
+// ---------------------------------------------------------------------------------
+// End of part3
+// ---------------------------------------------------------------------------------
 ```
+
 
 
 ### Part 4: Use Machine Learning to Identify the Building Clusters of Israel
 
-In this part, we innovatively propose using machine learning to identify Israel building clusters.
 
-Firstly, let's conduct a preliminary land screening on the West Bank of the Jordan River.
+In part 3 we get a series of target points, but some desert variations and possibly Palestinian land will also be included. And it’s hard to tell who exactly the bare land belongs to. Therefore we try to capture features that are imperceptible to the human eye through machine learning.
+
+Palestinian-Israeli architectural complexes vary greatly. The current complex corresponds to bare land on historical satellite images. We attempted to guide the classification of bare land by classifying building groups.
 
 
 ```js
+// ---------------------------------------------------------------------------------
+// Beginning of part4
+// Developed by Yilan Bu 
+// Unreflected workload includes attempts at various classification orders and methods
+// ---------------------------------------------------------------------------------
+
+
+
 // Pre-Processing
 
 // Calculate GLCM
@@ -388,15 +462,17 @@ Map.centerObject(westbank, 8);  // Center the map on the certain area with an ap
 Map.addLayer(westbank_image, {bands: ['B4', 'B3', 'B2'], max: 2000}, 'westbankborder');
 ```
 
-Then, we manually annotated Israeli and Palestinian building clusters. During this process, we made an unexpected discovery that the newly developed lands were developed by Israel, and due to resource constraints, it would be impossible for Palestine to engage in new land excavation. To enhance precision, we also marked desert areas due to the difficulty in distinguishing them from buildings using the NDVI and NDBI.
+
+
+Then, we manually annotated Israeli and Palestinian building clusters. To enhance precision, we also marked desert areas due to the difficulty in distinguishing them from buildings using the NDVI and NDBI.
 
 Therfore, we divided three classes:
 
-  - Class 1: Israel building clusters
+- Class 1: Israel building clusters
 
-  - Class 2: Palestinian building clusters
+- Class 2: Palestinian building clusters
 
-  - Class3: Desert areas
+- Class3: Desert areas
 
 
 ```js
@@ -481,27 +557,37 @@ var testAccuracy = validated.errorMatrix('class', 'classification');
 
 // Print the confusion matrix to the console for evaluation
 print('Confusion Matrix ', testAccuracy);
+
+// ---------------------------------------------------------------------------------
+// End of part4
+// ---------------------------------------------------------------------------------
 ```
 
 The model's accuracy is quite high, at around 90%. In detail, the model performs best when predicting desert regions, followed by Israeli building clusters. Confusion primarily occurs between Israeli and Palestinian building clusters, as well as between Israeli building clusters and desert regions.
 
-All in all, the model shows potential in identifying Israeli building clusters. By combining historical Israel's exploitation of vacant land and identifying Israel based on historical data, illegal encroachments can be identified. 
+However, during the annotation and recognition process, we made an unexpected discovery that most newly developed lands were developed by Israel, and it would be almost impossible for Palestine to engage in new land excavation. 
+
+Therefore, we did not use the part4 results for filtering, and we believed that the points obtained by part3 were sufficient for users. These points include only Israel and the desert, with the desert concentrated on the east side and easily distinguishable by the human eye. Applying part4 filtering may result in correct objects being excluded, which is less acceptable than deserts being included.
 
 
 ### Part 5: Create UI Panel
 
-
-This code segment primarily establishes and configures a user interface (UI) panel for interactively displaying and managing map layers. The panel allows users to select from various map layers such as "West Bank Border," "SAVI" (Soil Adjusted Vegetation Index), "Change Detection," and "Predicted Israeli Architectural Complex" through a dropdown menu. The interface updates the displayed map layers and associated information based on the user's selection.
+This code segment primarily establishes and configures a user interface (UI) panel for interactively displaying and managing map layers. The panel allows users to select from various map layers such as "West Bank Border", "SAVI", "Change Detection", and "New Israeli Settlement Locations" through a dropdown menu. The interface updates the displayed map layers and associated information based on the user's selection.
 
 Additionally, the panel includes a slider for selecting years, which influences the displayed content of map layers, such as SAVI indices or change detection results. Moreover, the panel supports the display of additional control elements like information buttons and year labels, which are displayed conditionally depending on the currently selected map layer.
 
-There's also an information panel used to display more detailed descriptions or data, such as error matrices. These controls are dynamically managed through written functions, such as showing and hiding specific controls, updating map layers, or handling map click events, thereby enhancing user interaction.
+These controls are dynamically managed through written functions, such as showing and hiding specific controls, updating map layers, or handling map click events, thereby enhancing user interaction.
 
 ![UI Panel](images/UI-1.png)
 ![UI Panel](images/UI-2.png)
 
 ```js
-// ---------------------------Part 5: create UI Panel---------------------------
+// ---------------------------------------------------------------------------------
+// Beginning of part5
+// Developed by Junrun Chen 
+// ---------------------------------------------------------------------------------
+
+// ---------------------------create UI Panel---------------------------
 var panel = ui.Panel();
 panel.style().set({
   width: '400px',
@@ -976,7 +1062,12 @@ function displayConfusionMatrix(errorMatrix) {
   panel.add(matrixChart);  // Display the chart
   currentWidgets.push(description, matrixChart);  // Store references to remove later
 }
+
+// ---------------------------------------------------------------------------------
+// End of part5
+// ---------------------------------------------------------------------------------
 ```
+
 
 ## References
 
