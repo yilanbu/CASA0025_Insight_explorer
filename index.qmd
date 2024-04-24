@@ -103,7 +103,7 @@ Additionally, users can select other options such as "West Bank Border", "Contro
 
 
 
-### Part 1: (Soil Adjusted Vegetation Index) SAVI
+### Part 1: Setting up and SAVI-based screening
 
 
 First, we extract satellite images from _Sentinel-2_ and filtering out cloud-obscured ones. These images are then subjected to machine learning analysis to identify surface features such as roads, farmland, forests, cities, and bare land. Various feature collections are imported to provide essential geographical context, including _West Bank borders_, _Palestinian and Israeli-Palestinian control areas_, and _points indicating illegal appropriation_. 
