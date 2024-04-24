@@ -931,4 +931,14 @@ function displayConfusionMatrix(errorMatrix) {
 }
 ```
 
+## References
 
+[Broken homes](https://interactive.aljazeera.com/aje/2017/jerusalem-2016-home-demolitions/index.html)
+
+[Data source](https://data.humdata.org/event/opt-israel-hostilities/?ext_geodata=1&q=&sort=last_modified%20desc&ext_page_size=25#)
+
+[How Israeli settlers are expanding illegal outposts amid Gaza war](https://www.aljazeera.com/features/longform/2024/3/19/how-israeli-settlers-are-expanding-illegal-outposts-amid-gaza-war)
+
+[How the political maps of Israel and Palestine have changed](https://www.nzz.ch/english/israeli-palestinian-conflict-how-the-political-maps-have-changed-ld.1664125)
+
+[Mapping Israeli occupation](https://www.aljazeera.com/news/2021/5/18/mapping-israeli-occupation-gaza-palestine)
