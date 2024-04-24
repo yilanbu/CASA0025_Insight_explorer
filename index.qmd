@@ -102,6 +102,7 @@ Additionally, users can select other options such as "West Bank Border", "Contro
 ```
 
 
+
 ### Part 1: (Soil Adjusted Vegetation Index) SAVI
 
 
@@ -169,7 +170,6 @@ Map.addLayer(buffered_geometry, {color: 'yellow'}, 'Study Area',false);
 ```
 
 
-
 For the purpose of machine learning training in part 4, we need to increase the amount of data, so two functions are defined: one calculates SAVI, and the other retrieves yearly Sentinel-2 images for analysis over time.
 
 
@@ -216,7 +216,6 @@ function YearlyImages(startYear, endYear, dateSuffix, bands) {
   return yearly_sentinel_images;
 }
 ```
-
 
 
 Apply the function to obtain year-by-year images and calculate SAVI. The results are organized into a dictionary for easy call in the next step.
@@ -294,6 +293,7 @@ for (var i = 2017; i < 2023; i++) {
 // End of part2
 // ---------------------------------------------------------------------------------
 ```
+
 
 
 ### Part 3: Change filter
@@ -463,7 +463,6 @@ Map.addLayer(westbank_image, {bands: ['B4', 'B3', 'B2'], max: 2000}, 'westbankbo
 ```
 
 
-
 Then, we manually annotated Israeli and Palestinian building clusters. To enhance precision, we also marked desert areas due to the difficulty in distinguishing them from buildings using the NDVI and NDBI.
 
 Therfore, we divided three classes:
@@ -570,6 +569,7 @@ However, during the annotation and recognition process, we made an unexpected di
 Therefore, we did not use the part4 results for filtering, and we believed that the points obtained by part3 were sufficient for users. These points include only Israel and the desert, with the desert concentrated on the east side and easily distinguishable by the human eye. Applying part4 filtering may result in correct objects being excluded, which is less acceptable than deserts being included.
 
 
+
 ### Part 5: Create UI Panel
 
 This code segment primarily establishes and configures a user interface (UI) panel for interactively displaying and managing map layers. The panel allows users to select from various map layers such as "West Bank Border", "SAVI", "Change Detection", and "New Israeli Settlement Locations" through a dropdown menu. The interface updates the displayed map layers and associated information based on the user's selection.
@@ -580,6 +580,7 @@ These controls are dynamically managed through written functions, such as showin
 
 ![UI Panel](images/UI-1.png)
 ![UI Panel](images/UI-2.png)
+
 
 ```js
 // ---------------------------------------------------------------------------------
