@@ -1,41 +1,75 @@
 # Israeli Settlement Identification in the West Bank
 
+![Israeli expansion of new settlements and Palestinian villages](images/pic1.png)
+
+
 ## Project Summary 
 
-In the West Bank of the Jordan River, Israel continues to encroach on Palestinian land by establishing illegal outposts, transforming them into settlements, and eventually legalizing them. The objective of this application is to detect these outposts and early settlements. Many journalists and researchers hope to mitigate the situation of Palestinian victimization through early intervention and raise public awareness about the status of Palestine beyond Gaza. However, they often manually search for these targets on satellite images. We hope to help them quickly locate these targets through this application.
 
-This application initially uses the Soil-Adjusted Vegetation Index (SAVI) to identify target land types, then employs change detection to identify newly cultivated land plots that appear each year. These plots include changes in desert areas and minor agricultural land developments. Therefore, it is necessary to use graphic filtering to select plots of specific areas and shapes, and subsequently pinpoint their central locations. Finally, we attempt to distinguish whether these plots belong to Israel through machine learning.
+The hot war in Gaza is well known in the Israeli-Palestinian conflict, but the slow erosion of the West Bank has received little attention. 
+
+In the West Bank of the Jordan River, Israel continues to encroach on Palestinian land by establishing illegal outposts, transforming them into settlements, and eventually legalizing them. The purpose of this application is to detect these new settlements. 
+
+Many journalists hope to mitigate the situation of Palestinian victimization through early intervention and raise public awareness about the status of Palestine beyond Gaza. However, sometimes they manually search for these targets on Google earth. We hope to help them quickly locate these targets through this application.
+
 
 ### Problem Statement 
 
-The hot war in Gaza is well known in the Israeli-Palestinian conflict, but the slow erosion of the West Bank has received little attention. Therefore, we hope to use this application to help relevant users quickly obtain real-time changes in Israel’s occupation of Palestine.
 
-The aim of this application is to use satellite imagery to find and mark all Israeli outposts and emerging settlements within the West Bank. For target users, they can quickly query the location and number of these newly emerged territorial encroachments.
+The purpose of this application is to use satellite imagery to find and mark new Israeli settlements in the West Bank. The target has certain characteristics. Finding a series of methods to filter and mark them with the features is the main problem the application needs to solve.
+
+For target users, the application should also provide a user interface in which they can quickly query the location and number of these newly emerged territorial encroachments.
+
+Through this application, we hope that it can make a small contribution to arousing a more comprehensive public understanding of the Palestinian-Israeli conflict.
+
 
 ### End User 
 
-Journalists, researchers and international organizations. 
+-Journalists, researchers and international organizations
 
-Israeli settlements are illegal. Usually when settlements develop to a certain scale, Israel will declare them legal. Early detection can help the international community intervene earlier. Some reporters did a manual blanket search through Google Earth. We hope this helps them resolve the issue quickly.
+Many newly Israeli settlements are illegal. Usually when settlements develop to a certain scale, Israel will declare them legal. Early detection can help the international community intervene earlier. Some reporters did a manual blanket search through Google Earth. We hope this helps them resolve the issue quickly.
+
+- Public
+
+The public can also use the app to understand how Israel has invaded Palestinian land, ultimately leading to the pockmarked borders of the area’s controlled areas.
+
+This [news article](https://www.aljazeera.com/news/2021/5/18/mapping-israeli-occupation-gaza-palestine) provides a detailed look at the Israeli-occupied territories.
+
 
 ### Data
 
-Harmonized Sentinel-2 MSI: MultiSpectral Instrument, Level-2A.
 
-[Related shp files for the Palestinian Israel area](https://data.humdata.org/event/opt-israel-hostilities/?ext_geodata=1&q=&sort=last_modified%20desc&ext_page_size=25#)
+#### Main data:
+
+- Harmonized Sentinel-2 MSI: MultiSpectral Instrument, Level-2A. (Surface Reflectance)
+- The resolution is 10m. 
+- The time span is 2017-03-28 – Present.
+
+Although our main purpose is to detect only the latest Israeli settlements, to use machine learning to distinguish settlement ownership, the larger the data set, the better. Therefore, we use all available years for identification and training. To make full use of the data, we cut the data by year with 04-01 as the boundary, and then preprocessed the data of each year. For example, the data in 2023 corresponds to 2023-04-01 - 2024-04-01.
+
+#### Other data:
+
+[Related shapefiles of Westbank area.](https://data.humdata.org/event/opt-israel-hostilities/?ext_geodata=1&q=&sort=last_modified%20desc&ext_page_size=25#)
+
 
 ### Methodology
 
-- Land Cover Classification(Random Forest), Feature Selection(NDVI, NDBI, SAVI) 
-- Change detection
+This application initially uses the SAVI to identify target land types, then employs change detection to identify newly cultivated land plots that appear each year. These plots include changes in desert areas and minor agricultural land developments. Therefore, it is necessary to use shape and area filtering to select plots of specific areas and shapes, and subsequently pinpoint their central locations. Finally, we attempt to distinguish whether these plots belong to Israel through machine learning.
+
+- Feature Selection(NDVI, SAVI), Land Cover Classification(Random Forest)
+- Change detection(difference, T-test)
 - Morphological Analysis, Area and Shape Filtering
 - Classification(Support Vector Machine, Random Forest)
 
+![Work Flow](images/pic2.png)
+
+
 ### Interface
 
-The main function is to provide relevant points to help users quickly locate the latest settlements or outposts. Users can select point options and a specific year to obtain the target position for that year. We also provide quantitative statistics and line charts to help users understand their changing trends.
+The main function is to provide target points to help users quickly locate the latest settlements or outposts. The left side is the operation panel. Users can select "New Israeli Settlement Locations" button and a specific year to obtain the target position for that year. We also provide quantitative statistics and line charts to help users understand their changing trends.
 
-Additionally, users can select other options such as West Bank borders, Palestinian-controlled areas, Israeli-controlled areas, etc. We also provide layers of some analysis processes to help users better understand the working principle of the application. Users can freely view these layers, such as SAVI analysis results, etc.
+Additionally, users can select other options such as "West Bank Border", "Control Areas", "SAVI", etc. We also provide layers of some background and analysis processes to help users better understand the working principle of the application. Users can freely view these layers, and look for image features that interest them.
+
 
 ## The Application 
 
@@ -50,7 +84,7 @@ Additionally, users can select other options such as West Bank borders, Palestin
 
 ### Part 1: (Soil Adjusted Vegetation Index) SAVI
 
-First, we extract satellite images from **Sentinel-2** and filtering out cloud-obscured ones. These images are then subjected to machine learning analysis to identify surface features such as roads, farmland, forests, cities, and bare land. Various feature collections are imported to provide essential geographical context, including **West Bank borders**, **Palestinian and Israeli-Palestinian control areas**, and **points indicating illegal appropriation**. 
+First, we extract satellite images from _Sentinel-2_ and filtering out cloud-obscured ones. These images are then subjected to machine learning analysis to identify surface features such as roads, farmland, forests, cities, and bare land. Various feature collections are imported to provide essential geographical context, including _West Bank borders_, _Palestinian and Israeli-Palestinian control areas_, and _points indicating illegal appropriation_. 
 
 ```js
 // Import West Bank borders.
@@ -347,8 +381,11 @@ Map.addLayer(westbank_image, {bands: ['B4', 'B3', 'B2'], max: 2000}, 'westbankbo
 Then, we manually annotated Israeli and Palestinian building clusters. During this process, we made an unexpected discovery that the newly developed lands were developed by Israel, and due to resource constraints, it would be impossible for Palestine to engage in new land excavation. To enhance precision, we also marked desert areas due to the difficulty in distinguishing them from buildings using the NDVI and NDBI.
 
 Therfore, we divided three classes:
+
   -Class 1: Israel building clusters
+
   -Class 2: Palestinian building clusters
+
   -Class3: Desert areas
 
 
