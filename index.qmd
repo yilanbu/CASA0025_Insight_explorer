@@ -44,6 +44,8 @@ Additionally, users can select other options such as West Bank borders, Palestin
 <iframe src=' https://ee-casa0025insightexplorers.projects.earthengine.app/view/insightexplorer ' width='100%' height='700px'></iframe>
 
 :::
+
+
 ## How it Works 
 
 ### Part 1: (Soil Adjusted Vegetation Index) SAVI
