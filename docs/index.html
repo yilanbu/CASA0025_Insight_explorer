@@ -121,38 +121,69 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="israeli-settlement-identification-in-the-west-bank" class="level1 page-columns page-full">
 <h1>Israeli Settlement Identification in the West Bank</h1>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/pic1.png" class="img-fluid figure-img"></p>
+<figcaption>Israeli expansion of new settlements and Palestinian villages</figcaption>
+</figure>
+</div>
 <section id="project-summary" class="level2">
 <h2 class="anchored" data-anchor-id="project-summary">Project Summary</h2>
-<p>In the West Bank of the Jordan River, Israel continues to encroach on Palestinian land by establishing illegal outposts, transforming them into settlements, and eventually legalizing them. The objective of this application is to detect these outposts and early settlements. Many journalists and researchers hope to mitigate the situation of Palestinian victimization through early intervention and raise public awareness about the status of Palestine beyond Gaza. However, they often manually search for these targets on satellite images. We hope to help them quickly locate these targets through this application.</p>
-<p>This application initially uses the Soil-Adjusted Vegetation Index (SAVI) to identify target land types, then employs change detection to identify newly cultivated land plots that appear each year. These plots include changes in desert areas and minor agricultural land developments. Therefore, it is necessary to use graphic filtering to select plots of specific areas and shapes, and subsequently pinpoint their central locations. Finally, we attempt to distinguish whether these plots belong to Israel through machine learning.</p>
+<p>The hot war in Gaza is well known in the Israeli-Palestinian conflict, but the slow erosion of the West Bank has received little attention.</p>
+<p>In the West Bank of the Jordan River, Israel continues to encroach on Palestinian land by establishing illegal outposts, transforming them into settlements, and eventually legalizing them. The purpose of this application is to detect these new settlements.</p>
+<p>Many journalists hope to mitigate the situation of Palestinian victimization through early intervention and raise public awareness about the status of Palestine beyond Gaza. However, sometimes they manually search for these targets on Google earth. We hope to help them quickly locate these targets through this application.</p>
 <section id="problem-statement" class="level3">
 <h3 class="anchored" data-anchor-id="problem-statement">Problem Statement</h3>
-<p>The hot war in Gaza is well known in the Israeli-Palestinian conflict, but the slow erosion of the West Bank has received little attention. Therefore, we hope to use this application to help relevant users quickly obtain real-time changes in Israel’s occupation of Palestine.</p>
-<p>The aim of this application is to use satellite imagery to find and mark all Israeli outposts and emerging settlements within the West Bank. For target users, they can quickly query the location and number of these newly emerged territorial encroachments.</p>
+<p>The purpose of this application is to use satellite imagery to find and mark new Israeli settlements in the West Bank. The target has certain characteristics. Finding a series of methods to filter and mark them with the features is the main problem the application needs to solve.</p>
+<p>For target users, the application should also provide a user interface in which they can quickly query the location and number of these newly emerged territorial encroachments.</p>
+<p>Through this application, we hope that it can make a small contribution to arousing a more comprehensive public understanding of the Palestinian-Israeli conflict.</p>
 </section>
 <section id="end-user" class="level3">
 <h3 class="anchored" data-anchor-id="end-user">End User</h3>
-<p>Journalists, researchers and international organizations.</p>
-<p>Israeli settlements are illegal. Usually when settlements develop to a certain scale, Israel will declare them legal. Early detection can help the international community intervene earlier. Some reporters did a manual blanket search through Google Earth. We hope this helps them resolve the issue quickly.</p>
+<p>-Journalists, researchers and international organizations</p>
+<p>Many newly Israeli settlements are illegal. Usually when settlements develop to a certain scale, Israel will declare them legal. Early detection can help the international community intervene earlier. Some reporters did a manual blanket search through Google Earth. We hope this helps them resolve the issue quickly.</p>
+<ul>
+<li>Public</li>
+</ul>
+<p>The public can also use the app to understand how Israel has invaded Palestinian land, ultimately leading to the pockmarked borders of the area’s controlled areas.</p>
+<p>This <a href="https://www.aljazeera.com/news/2021/5/18/mapping-israeli-occupation-gaza-palestine">news article</a> provides a detailed look at the Israeli-occupied territories.</p>
 </section>
 <section id="data" class="level3">
 <h3 class="anchored" data-anchor-id="data">Data</h3>
-<p>Harmonized Sentinel-2 MSI: MultiSpectral Instrument, Level-2A.</p>
-<p><a href="https://data.humdata.org/event/opt-israel-hostilities/?ext_geodata=1&amp;q=&amp;sort=last_modified%20desc&amp;ext_page_size=25#">Related shp files for the Palestinian Israel area</a></p>
+<section id="main-data" class="level4">
+<h4 class="anchored" data-anchor-id="main-data">Main data:</h4>
+<ul>
+<li>Harmonized Sentinel-2 MSI: MultiSpectral Instrument, Level-2A. (Surface Reflectance)</li>
+<li>The resolution is 10m.</li>
+<li>The time span is 2017-03-28 – Present.</li>
+</ul>
+<p>Although our main purpose is to detect only the latest Israeli settlements, to use machine learning to distinguish settlement ownership, the larger the data set, the better. Therefore, we use all available years for identification and training. To make full use of the data, we cut the data by year with 04-01 as the boundary, and then preprocessed the data of each year. For example, the data in 2023 corresponds to 2023-04-01 - 2024-04-01.</p>
+</section>
+<section id="other-data" class="level4">
+<h4 class="anchored" data-anchor-id="other-data">Other data:</h4>
+<p><a href="https://data.humdata.org/event/opt-israel-hostilities/?ext_geodata=1&amp;q=&amp;sort=last_modified%20desc&amp;ext_page_size=25#">Related shapefiles of Westbank area.</a></p>
+</section>
 </section>
 <section id="methodology" class="level3">
 <h3 class="anchored" data-anchor-id="methodology">Methodology</h3>
+<p>This application initially uses the SAVI to identify target land types, then employs change detection to identify newly cultivated land plots that appear each year. These plots include changes in desert areas and minor agricultural land developments. Therefore, it is necessary to use shape and area filtering to select plots of specific areas and shapes, and subsequently pinpoint their central locations. Finally, we attempt to distinguish whether these plots belong to Israel through machine learning.</p>
 <ul>
-<li>Land Cover Classification(Random Forest), Feature Selection(NDVI, NDBI, SAVI)</li>
-<li>Change detection</li>
+<li>Feature Selection(NDVI, SAVI), Land Cover Classification(Random Forest)</li>
+<li>Change detection(difference, T-test)</li>
 <li>Morphological Analysis, Area and Shape Filtering</li>
 <li>Classification(Support Vector Machine, Random Forest)</li>
 </ul>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/pic2.png" class="img-fluid figure-img"></p>
+<figcaption>Work Flow</figcaption>
+</figure>
+</div>
 </section>
 <section id="interface" class="level3">
 <h3 class="anchored" data-anchor-id="interface">Interface</h3>
-<p>The main function is to provide relevant points to help users quickly locate the latest settlements or outposts. Users can select point options and a specific year to obtain the target position for that year. We also provide quantitative statistics and line charts to help users understand their changing trends.</p>
-<p>Additionally, users can select other options such as West Bank borders, Palestinian-controlled areas, Israeli-controlled areas, etc. We also provide layers of some analysis processes to help users better understand the working principle of the application. Users can freely view these layers, such as SAVI analysis results, etc.</p>
+<p>The main function is to provide target points to help users quickly locate the latest settlements or outposts. The left side is the operation panel. Users can select “New Israeli Settlement Locations” button and a specific year to obtain the target position for that year. We also provide quantitative statistics and line charts to help users understand their changing trends.</p>
+<p>Additionally, users can select other options such as “West Bank Border”, “Control Areas”, “SAVI”, etc. We also provide layers of some background and analysis processes to help users better understand the working principle of the application. Users can freely view these layers, and look for image features that interest them.</p>
 </section>
 </section>
 <section id="the-application" class="level2 page-columns page-full">
@@ -166,7 +197,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="how-it-works">How it Works</h2>
 <section id="part-1-soil-adjusted-vegetation-index-savi" class="level3">
 <h3 class="anchored" data-anchor-id="part-1-soil-adjusted-vegetation-index-savi">Part 1: (Soil Adjusted Vegetation Index) SAVI</h3>
-<p>First, we extract satellite images from <strong>Sentinel-2</strong> and filtering out cloud-obscured ones. These images are then subjected to machine learning analysis to identify surface features such as roads, farmland, forests, cities, and bare land. Various feature collections are imported to provide essential geographical context, including <strong>West Bank borders</strong>, <strong>Palestinian and Israeli-Palestinian control areas</strong>, and <strong>points indicating illegal appropriation</strong>.</p>
+<p>First, we extract satellite images from <em>Sentinel-2</em> and filtering out cloud-obscured ones. These images are then subjected to machine learning analysis to identify surface features such as roads, farmland, forests, cities, and bare land. Various feature collections are imported to provide essential geographical context, including <em>West Bank borders</em>, <em>Palestinian and Israeli-Palestinian control areas</em>, and <em>points indicating illegal appropriation</em>.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Import West Bank borders.</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> westbank <span class="op">=</span> ee<span class="op">.</span><span class="fu">FeatureCollection</span>(<span class="st">"projects/ee-casa0025insightexplorers/assets/WestBankBorder"</span>)<span class="op">;</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -432,7 +463,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a><span class="bu">Map</span><span class="op">.</span><span class="fu">centerObject</span>(westbank<span class="op">,</span> <span class="dv">8</span>)<span class="op">;</span>  <span class="co">// Center the map on the certain area with an appropriate zoom level</span></span>
 <span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a><span class="bu">Map</span><span class="op">.</span><span class="fu">addLayer</span>(westbank_image<span class="op">,</span> {<span class="dt">bands</span><span class="op">:</span> [<span class="st">'B4'</span><span class="op">,</span> <span class="st">'B3'</span><span class="op">,</span> <span class="st">'B2'</span>]<span class="op">,</span> <span class="dt">max</span><span class="op">:</span> <span class="dv">2000</span>}<span class="op">,</span> <span class="st">'westbankborder'</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Then, we manually annotated Israeli and Palestinian building clusters. During this process, we made an unexpected discovery that the newly developed lands were developed by Israel, and due to resource constraints, it would be impossible for Palestine to engage in new land excavation. To enhance precision, we also marked desert areas due to the difficulty in distinguishing them from buildings using the NDVI and NDBI.</p>
-<p>Therfore, we divided three classes: -Class 1: Israel building clusters -Class 2: Palestinian building clusters -Class3: Desert areas</p>
+<p>Therfore, we divided three classes:</p>
+<p>-Class 1: Israel building clusters</p>
+<p>-Class 2: Palestinian building clusters</p>
+<p>-Class3: Desert areas</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Generating Labeled Data</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co">// Take random samples of points from within these polygons</span></span>
