@@ -1,4 +1,4 @@
-# Israeli Settlement Identification in the West Bank
+# New Israeli Settlement Identification in the West Bank
 
 ![Israeli expansion of new settlements and Palestinian villages](images/pic1.png)
 
@@ -25,7 +25,7 @@ Through this application, we hope that it can make a small contribution to arous
 
 ### End User 
 
--Journalists, researchers and international organizations
+- Journalists, researchers and international organizations
 
 Many newly Israeli settlements are illegal. Usually when settlements develop to a certain scale, Israel will declare them legal. Early detection can help the international community intervene earlier. Some reporters did a manual blanket search through Google Earth. We hope this helps them resolve the issue quickly.
 
@@ -383,11 +383,11 @@ Then, we manually annotated Israeli and Palestinian building clusters. During th
 
 Therfore, we divided three classes:
 
-  -Class 1: Israel building clusters
+  - Class 1: Israel building clusters
 
-  -Class 2: Palestinian building clusters
+  - Class 2: Palestinian building clusters
 
-  -Class3: Desert areas
+  - Class3: Desert areas
 
 
 ```js
