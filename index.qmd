@@ -586,9 +586,11 @@ These controls are dynamically managed through written functions, such as showin
 // ---------------------------------------------------------------------------------
 // Beginning of part5
 // Developed by Junrun Chen 
+// Beautified by Xiaolin Liu
 // ---------------------------------------------------------------------------------
 
-// ---------------------------create UI Panel---------------------------
+//////////////////////////////////////////////////////////////////////////////////
+// create UI Panel
 var panel = ui.Panel();
 panel.style().set({
   width: '400px',
@@ -598,21 +600,21 @@ ui.root.insert(0, panel);
 
 // Layer select change event handler
 var layerSelect = ui.Select({
-  items: ['West Bank Border', 'SAVI', 'Change detection', 'Predicted Israeli Architectural Complex','Barren Centers','Built-Up Centers'],
+  items: ['West Bank Border', 'SAVI', 'Change detection', 'Predicted Israeli Architectural Complex','New Israeli Building Clusters'],
   onChange: handleLayerChange
 });
 
 // Function to handle layer changes
 function handleLayerChange(selected) {
   currentLayer = selected;
-  var showSlider = selected === 'SAVI' || selected === 'Change detection' || selected === 'Built-Up Centers' || selected === 'Barren Centers';
+  var showSlider = selected === 'SAVI' || selected === 'Change detection'|| selected === 'New Israeli Building Clusters';
   var showChart = selected === 'SAVI'; // Only show chart for SAVI layer
-  var showLabels = selected === 'SAVI' || selected === 'Change detection' || selected === 'Built-Up Centers' || selected === 'Barren Centers';
+  var showLabels = selected === 'SAVI' || selected === 'Change detection'|| selected === 'New Israeli Building Clusters';
   var showInfoButton = selected === 'Predicted Israeli Architectural Complex';
 
   // Update the visibility of UI components
   //toggleInfoButton.style().set('shown', showInfoButton);
-  updateLabelPanelVisibility(showLabels);
+  //updateLabelPanelVisibility(showLabels);
   yearSlider.style().set('shown', showSlider);
   yearLabel.style().set('shown', showSlider);
   
@@ -628,67 +630,225 @@ function handleLayerChange(selected) {
   }
 
   // Display the confusion matrix if required
+  if (selected === 'West Bank Border'){
+    
+    // New Israeli Settlement Identification
+    var boldText = ui.Label({
+      value: 'New Israeli Settlement Identification In The West Bank',
+      style: {fontWeight: 'bold', fontSize: '14px'}
+    });
+    panel.add(boldText); 
+
+    // Description 1
+    var description1 = ui.Label({
+      value: 'Users can explore different contents through the tabs on the upper left, and detailed descriptions will be presented on the corresponding pages. In addition to directly querying new Israeli settlements, the app also visualizes the entire analysis process. Users are free to explore what is happening at each step.',
+      style:{fontSize:'12px'}
+    });
+    panel.add(description1);  
+    
+    var link = ui.Label({
+      value: 'For more information:  https://www.aljazeera.com/news/2021/5/18/mapping-israeli-occupation-gaza-palestine',
+      style:{fontSize:'12px',color: '000129'}
+    })
+    panel.add(link);
+    
+    // Instructions
+    var title1 = ui.Label({
+      value: 'Instructions:',
+      style: {fontWeight: 'bold', fontSize: '12px'}  
+    });
+    panel.add(title1);
+    
+    var instruction = ui.Label({
+      value:'We can toggle between layers using the “Layers” button in the top right corner of the map. Blue represents the Palestinian-controlled areas, red represents the Palestinian-Israeli controlled areas, and the rest of the West Bank is under full Israeli control.',
+      style:{fontSize:'12px'}
+    });
+    panel.add(instruction);
+    
+    var note = ui.Label({
+      value:'We can explore different contents through the tabs on the upper left, and detailed descriptions will be presented on the corresponding pages. In addition to directly querying new Israeli settlements, the app also visualizes the entire analysis process. ',
+      style:{fontSize:'12px'}
+    });
+    panel.add(note);
+    
+    currentWidgets.push(boldText,description1,link,title1,instruction,note);
+  }
+
   if (selected === 'Predicted Israeli Architectural Complex'){
       var errorMatrix = validated.errorMatrix('class', 'classification');
       displayConfusionMatrix(errorMatrix);
   }
   
-  if (selected === 'Change detection'){
-    
-    var description = ui.Label('We can zoom in to see if there are any new roads under construction. If we notice a continuous red line, it is highly likely that this road is newly built.');
-    panel.add(description);  // Add the description
-    currentWidgets.push(description);
-  
-  }
   if (selected === 'SAVI'){
     
-    var savidescription = ui.Label('Through SAVI, we can find all the bare land stocks in the corresponding year. Zooming in on the image we can see plots of different sizes and shapes. After excluding fragmented farmland and huge areas of desert, the large-scale plots are likely to be new construction sites.');
-    panel.add(savidescription);  // Add the description
-    currentWidgets.push(savidescription);
-    panel.add(toggleRegionButton);  // Add the description
-    currentWidgets.push(toggleRegionButton);
+    var title1 = ui.Label({
+      value: 'Purpose:',
+      style: {fontWeight: 'bold', fontSize: '12px'}  
+    });
+    panel.add(title1);
+    
+    var Purpose = ui.Label({
+      value:'Israeli outposts and early settlements often appear as bare land. Based on this characteristic, SAVI can efficiently and accurately identify target lands, outperforming machine learning in both speed and accuracy.',
+      style:{fontSize:'12px'}
+    });
+    panel.add(Purpose);
+    
+    // Note
+    var title2 = ui.Label({
+      value: 'Instructions: ',
+      style: {fontWeight: 'bold', fontSize: '12px'}  
+    });
+    panel.add(title2);
+    
+    var instruction = ui.Label({
+      value:'By dragging the slider, users can view the identification results for different years. Although not the direct purpose of this application, we also provide visualization of the SAVI index to help users understand the trends in bare land changes and the proportions in different years.',
+      style:{fontSize:'12px'}
+    });
+    panel.add(instruction);
+    
+    var description = ui.Label({
+      value:'The image is presented in red and black, with red representing our target identified lands. After zooming and moving the image, users can see some clear lines and shapes emerging. Lines indicate unhardened roads, and shapes represent bare land. These likely correspond to the early Israeli settlements.',
+      style:{fontSize:'12px'}
+    });
+    panel.add(description);
+    
+    currentWidgets.push(title1,Purpose,title2,instruction,description);
+  }
   
+  if (selected === 'Change detection'){
+    
+    var title1 = ui.Label({
+      value: 'Purpose:',
+      style: {fontWeight: 'bold', fontSize: '12px'}  
+    });
+    panel.add(title1);
+    
+    var Purpose = ui.Label({
+      value:'SAVI detection results include existing bare land and extensive permanent deserts. The application aims to identify new settlements, thus necessitating the exclusion of these perennially bare areas. By calculating the difference between SAVI images from consecutive years, we can isolate the changed areas.',
+      style:{fontSize:'12px'}
+    });
+    panel.add(Purpose);
+    
+    var title2 = ui.Label({
+      value: 'Instructions: ',
+      style: {fontWeight: 'bold', fontSize: '12px'}  
+    });
+    panel.add(title2);
+    
+    var instruction = ui.Label({
+      value:'We can zoom in to see if there are any new roads under construction. If we notice a continuous red line, it is highly likely that this road is newly built.',
+      style:{fontSize:'12px'}
+    });
+    panel.add(instruction);
+
+    panel.add(toggleRegionButton);  
+    currentWidgets.push(title1,Purpose,title2,instruction,toggleRegionButton);
+  }
+
+  if (selected === 'Predicted Israeli Architectural Complex'){
+    
+    var title1 = ui.Label({
+      value: 'Purpose:',
+      style: {fontWeight: 'bold', fontSize: '12px'}  
+    });
+    panel.add(title1);
+    
+    var Purpose = ui.Label({
+      value: 'After identifying the coordinates of all target type land, it is necessary to distinguish land ownership. Directly labeling bare land is inefficient and challenging, so we utilize a novel approach using historical satellite images. While bare land in Israel lacks distinctive features, Israeli buildings significantly differ from those in Palestine. Historical images of locations with Israeli buildings will inevitably show bare land. By labeling and classifying these buildings, we can attribute the land to Israeli ownership.',
+      style:{fontSize:'12px'}
+    });
+    panel.add(Purpose);
+    
+    var title2 = ui.Label({
+      value: 'Instructions: ',
+      style: {fontWeight: 'bold', fontSize: '12px'}  
+    });
+    panel.add(title2);
+    
+    var description1 = ui.Label({
+      value:'The image on the right, where red indicates the predicted Israeli building clusters.',
+      style:{fontSize:'12px'}
+    });
+    panel.add(description1);
+    
+    var description2 = ui.Label({
+      value:'The table on the left is the confusion matrix of the classification results. ',
+      style:{fontSize:'12px'}
+    });
+    panel.add(description2);    
+    
+    var description3 = ui.Label({
+      value:'Class 1 is Israel building clusters. ',
+      style:{fontSize:'12px'}
+    });
+    panel.add(description3);        
+
+    var description4 = ui.Label({
+      value:'Class 2 is Palestinian building clusters.',
+      style:{fontSize:'12px'}
+    });
+    panel.add(description4);        
+
+    var description5 = ui.Label({
+      value:'Class 3 is the desert areas.',
+      style:{fontSize:'12px'}
+    });
+    panel.add(description5);   
+    var description6 = ui.Label({
+      value:'The accuracy is quite high, at around 90%. In detail, the model performs best when predicting desert regions, followed by Israeli building clusters. Confusion primarily occurs between Israeli and Palestinian building clusters, as well as between Israeli building clusters and desert regions.',
+      style:{fontSize:'12px'}
+    });
+    panel.add(description6);   
+
+    currentWidgets.push(title1,Purpose,title2,description1,description2,description3,description4,description5,description6);
+  }
+  
+  if (selected === 'New Israeli Building Clusters'){
+
+    // Description 1
+    var description1 = ui.Label({
+      value:'We can use the slider on the upper left to switch between different years to view the distribution of recognition results. The left panel provides a visualization of the current year and the trend of changes to facilitate user data query.',
+      style:{fontSize:'12px'}
+    });
+    panel.add(description1);  
+    
+    // Instructions
+    var title1 = ui.Label({
+      value: 'Note:',
+      style: {fontWeight: 'bold', fontSize: '12px'}  
+    });
+    panel.add(title1);
+    
+    var note = ui.Label({
+      value:'By filtering the shapes and areas within the change detection results, the application extracts the centroids of various geometric shapes corresponding to Israeli settlements established in different years. Given the broad span of years, users can observe that some settlements have developed into towns. Users can toggle between years to view the latest settlements or those that have been fully established. Due to limitations in the filtering logic, some desert changes and agricultural land transformations are not fully filtered out. In the future, new methods will be sought to optimize accuracy.',
+      style:{fontSize:'12px'}
+    });
+    panel.add(note);
+
+    currentWidgets.push(description1,title1,note);
   }
 }
 
 // Add controls to the panel
 panel.add(ui.Label('Layer Selector:', {fontWeight: 'bold'}));
-panel.add(layerSelect);
+panel.widgets().set(1,layerSelect);
 
 var currentWidgets = [];  // Array to store current widgets for easy removal
 
 // Create a slider to select the year
 var yearSlider = ui.Slider({
   min: 2017,
-  max: 2023,
-  value: 2017,
+  max: 2022,
+  value: 2018,
   step: 1,
   style: {stretch: 'horizontal', shown: false}
 });
-var yearLabel = ui.Label('Current Year:', {fontWeight: 'bold', shown: false});
-panel.add(yearLabel);
-panel.add(yearSlider);
+var yearLabel = ui.Label('Chozen Year:', {fontWeight: 'bold', shown: false});
+yearLabel.setValue('Chozen Year: ' + yearSlider.getValue());
+panel.widgets().set(2,yearLabel);
+panel.widgets().set(3,yearSlider);
 
-// Create year labels
-var yearLabels = {
-  '2017': '2017',
-  '2018': '2018',
-  '2019': '2019',
-  '2020': '2020',
-  '2021': '2021',
-  '2022': '2022',
-  '2023': '2023'
-};
-
-// Create a panel for year labels, initially not shown
-var labelPanel = ui.Panel({
-  widgets: Object.keys(yearLabels).map(function(year) {
-    return ui.Label(yearLabels[year], {shown: false});
-  }),
-  layout: ui.Panel.Layout.flow('horizontal'),
-  style: {stretch: 'horizontal', textAlign: 'justify-between', shown: false}
-});
-panel.add(labelPanel);
+var currentLayer = '';
 
 // Create an info panel
 var infoPanel = ui.Panel({
@@ -697,7 +857,7 @@ var infoPanel = ui.Panel({
     width: '300px',
     maxHeight: '400px',
     padding: '8px',
-    backgroundColor: 'white',
+    backgroundColor: 'Black',
     shown: false
   }
 });
@@ -715,41 +875,76 @@ var toggleInfoButton = ui.Button({
 });
 panel.add(toggleInfoButton);
 
-// Function to update the visibility of the label panel
-function updateLabelPanelVisibility(visible) {
-  labelPanel.widgets().forEach(function(label) {
-    label.style().set('shown', visible);
-  });
-  labelPanel.style().set('shown', visible);
+
+console.log(diffImages);
+
+function countChanges(diffImage, geometry) {
+  var histogram = diffImage.reduceRegion({
+    reducer: ee.Reducer.frequencyHistogram(),
+    geometry: geometry,
+    scale: 30,
+    maxPixels: 1e9
+  }).get('SAVI');
+
+  return ee.Dictionary(histogram);
 }
 
-// Global variable to keep track of the current selected layer
-var currentLayer = '';
+var changeData = [];
 
+var years = ['2017_2018', '2018_2019', '2019_2020', '2020_2021', '2021_2022', '2022_2023'];
+years.forEach(function(year) {
+  var diffImage = diffImages.get(year);
+  var stats = countChanges(ee.Image(diffImage), study_area);
+  changeData.push(stats);
+});
+
+var changeFc = ee.FeatureCollection(changeData.map(function(item, index) {
+  return ee.Feature(null, {
+    'year': years[index],
+    'increased': item.getNumber('1'),
+    'decreasedUnchanged': item.getNumber('0')
+  });
+}));
+
+
+var changeChart = ui.Chart.feature.byFeature({
+  features: changeFc,
+  xProperty: 'year',
+  yProperties: ['increased', 'decreasedUnchanged']
+}).setOptions({
+  title: 'Yearly SAVI Changes',
+  vAxis: {title: 'Pixel Count'},
+  hAxis: {title: 'Year'},
+  lineWidth: 1,
+  series: {
+    0: {color: 'green'},  
+    1: {color: 'red'}     
+  }
+});
 var saviregion
 // Start with study_area as the default active region
 var activeGeometry = study_area;
 // Button to toggle between study_area and saviregion
-var toggleRegionButton = ui.Button('Toggle Geometry');  // Initial label setup
+var toggleRegionButton = ui.Button('Switch Area');  // Initial label setup
 
 toggleRegionButton.onClick(function() {
   // Toggle the active geometry
+  handleLayerChange(currentLayer);
   activeGeometry = (activeGeometry === study_area) ? saviregion : study_area;
   
   // Update the label of the button
-  var newLabel = 'Active Geometry: ' + (activeGeometry === study_area ? 'Study Area' : 'SAVI Region');
+  var newLabel = 'Active Geometry: ' + (activeGeometry === study_area ? 'Default Area' : 'Custom Region');
   toggleRegionButton.setLabel(newLabel);
 
-  // Recalculate counts when the geometry is toggled
-  //calculateSAVI1Counts();
+
 });
 
 // Global variable to store the reference of the clicked point layer
 var clickedPointLayer = null;
 
 function mapClickHandler(coords) {
+  if (currentLayer === 'Change detection') {
   var point = ee.Geometry.Point([coords.lon, coords.lat]);
-
   // Adjust this buffer radius as needed or use it directly for point-based analysis
   saviregion = point.buffer(1000);  // 1000 meter buffer around the clicked point
 
@@ -757,7 +952,6 @@ function mapClickHandler(coords) {
   if (clickedPointLayer !== null) {
     Map.layers().remove(clickedPointLayer);
   }
-
   // Define the style for the point
   var pointStyle = {color: 'green', fillColor: '00000000'};
 
@@ -765,9 +959,7 @@ function mapClickHandler(coords) {
   clickedPointLayer = Map.addLayer(point, pointStyle, 'Clicked Point');
 
   // Additional actions based on current layer type
-  if (currentLayer === 'SAVI') {
-    var saviImage = ee.Image(savi_2017_2023.get(yearSlider.getValue().toString()));
-    // Further processing or layer addition can be handled here
+
   }
 }
 
@@ -781,14 +973,79 @@ function resetYearselector() {
       panel.add(yearSlider);
 }
 
+var currentLegend = null;
+var diffimage
+
+
+function addLegendWithAnnotations(options,clearExisting) {
+  var title = options.title;
+  var palette = options.palette;
+  var annotations = options.annotations;
+  var position = options.position;
+
+  if (clearExisting && currentLegend) {
+    Map.remove(currentLegend);
+    currentLegend = null;
+  }
+
+  var legend = ui.Panel({
+    style: {
+      position: position,
+      padding: '8px',
+      backgroundColor: 'white'
+    }
+  });
+  
+  var legendTitle = ui.Label({
+    value: title,
+    style:{fontWeight: 'bold'}
+  });
+  legend.add(legendTitle);
+  
+  var colorBlocksPanel = ui.Panel({
+    layout: ui.Panel.Layout.flow('vertical')
+  });
+  
+  var lineHeight = 24; // Increased line height for better readability
+  var totalHeight = palette.length * lineHeight; // Total height of the legend
+  
+  colorBlocksPanel.style().set('height', totalHeight + 'px'); // Set the height of the color block panel
+  
+  palette.forEach(function(color, index) {
+    var colorBlockPanel = ui.Panel({
+      layout: ui.Panel.Layout.flow('horizontal') // Each color block and annotation on the same line
+    });
+    
+    var colorBlock = ui.Label('', {
+      backgroundColor: color,
+      padding: '6px',
+      margin: '4px 4px 0 0', // Increase right margin
+      width: '20px', // Increase width
+      height: '20px' // Increase height
+    });
+    colorBlockPanel.add(colorBlock);
+    
+    var annotationLabel = ui.Label(annotations[index], {
+      margin: '0' // Remove unnecessary margins
+    });
+    colorBlockPanel.add(annotationLabel);
+    
+    colorBlocksPanel.add(colorBlockPanel);
+  });
+  
+  legend.add(colorBlocksPanel);
+  currentLegend = legend;
+  Map.add(legend);
+}
+
 // Function used to update the map display based on the selected layer
 function updateMapLayers(selected) {
-  Map.layers().reset();
   Map.setOptions("satellite");
   var darkLayer = ee.Image.constant(0).visualize({palette: ['000000'], opacity: 0.5}); 
-  Map.addLayer(darkLayer, {}, 'Dark Layer');
+  Map.addLayer(darkLayer, {}, 'Dark Layer'); 
   Map.setZoom(13);
   removeChart();
+  var endYear = yearSlider.getValue() + 1
   var year = yearSlider.getValue();
   // Clear specific widgets related to the confusion matrix
         currentWidgets.forEach(function(widget) {
@@ -797,58 +1054,71 @@ function updateMapLayers(selected) {
         currentWidgets = [];  // Reset the widget tracker
   switch (selected) {
     case 'West Bank Border':
-      Map.addLayer(westbank, westbank_settings, 'West Bank Border');
+      addLegendWithAnnotations({
+      title: 'West Bank Border',
+      palette: ['07C7F2','F2055C','260B10'],
+      annotations: ['Palestinian-controlled','Palestinian-Israeli controlled','Israeli-controlled'],
+      position: 'bottom-right'
+      }, true);
+      Map.setCenter(35.5, 32.1, 9)
+      Map.addLayer(westbank, {color:'260B10'}, 'West Bank Border',1,0.9);
+      Map.addLayer(areaB, {color:'F2055C'}, 'Area B',1,0.8);
+      Map.addLayer(areaA, {color:'07C7F2'}, 'Area A',1,0.8);
       break;
     case 'SAVI':
       //clearChart();
+      addLegendWithAnnotations({
+      title: 'SAVI',
+      palette: ['F20519','260B10'],
+      annotations: ['Bare Land', 'Other'],
+      position: 'bottom-right'
+      }, true);
       resetYearselector();
       var savi_image = ee.Image(savi_2017_2023.get(yearSlider.getValue().toString()));
-      Map.addLayer(savi_image, visParams, 'SAVI_' + yearSlider.getValue().toString());
+      Map.addLayer(savi_image, visdiff, 'SAVI_' + yearSlider.getValue().toString()+ '_'+ endYear); 
       break;
     case 'Change detection':
       //clearChart();
-      var description = ui.Label('The red dots identified are the projected building complexes in Israel.');
-      currentWidgets.push(description);
+      addLegendWithAnnotations({
+      title: 'Difference',
+      palette: ['F20519', '260B10'],
+      annotations: ['Changed Area', 'Unchanged Area'],
+      position: 'bottom-right'
+      }, true);
       resetYearselector();
-      if (year > 2017) {
-        var image1 = ee.Image(savi_2017_2023.get((year - 1).toString()));
-        var image2 = ee.Image(savi_2017_2023.get(year.toString()));
-        calculateChange(image1, image2, year - 1, year);
-      }
+      var startYear = yearSlider.getValue(); 
+      panel.widgets().forEach(function(widget) {
+        if (widget instanceof ui.Label && widget.getValue() === 'Please select a year after 2017 for the end year to see the changes found this year.') {
+          panel.remove(widget);
+        }
+        
+      });
+      var endYear = startYear + 1; 
+      var diffKey = startYear.toString() + '_' + endYear.toString();
+      var diff_image = ee.Image(diffImages.get(diffKey));
+      Map.addLayer(diff_image, visdiff, 'Difference_' + diffKey); 
+      diffimage = diff_image;
+      
       break;
     case 'Predicted Israeli Architectural Complex':
-      Map.addLayer(Israeli_prediction, {palette: 'red'}, 'Predicted Israeli Architectural Complex',true);
+      addLegendWithAnnotations({
+      title: 'Predicted Israeli Architectural Complex',
+      palette: ['5821A6'],
+      annotations: ['Predicted Israeli Building'],
+      position: 'bottom-right'
+      }, true);
+      Map.addLayer(westbank, {palette: '260B10'}, 'West Bank Border',1,0.8);
+      Map.addLayer(Israeli_prediction, {palette: '5821A6'}, 'Predicted Israeli Architectural Complex',true); // 在这里添加预测建筑图层的图例
       break;
-    case 'Built-Up Centers':
-      //clearChart();
-      var description = ui.Label('The red dots identified are the projected building complexes in Israel.');
-      currentWidgets.push(description);
+    case 'New Israeli Building Clusters':
+      addLegendWithAnnotations({
+      title: 'New Israeli Building Clusters',
+      palette: ['F2B33D'],
+      annotations: ['Centroids'],
+      position: 'bottom-right'
+      }, true);
       resetYearselector();
-      //classifyAndVisualizeCenters(savi_2017_2023, year, year + 1, 100);
-      // Example: Add the centroid layers for specific years to the map.
-     Map.addLayer(centroidLayers[2017], {color: 'yellow'}, 'Centroids 2017-2018');
-     Map.addLayer(centroidLayers[2018], {color: 'yellow'}, 'Centroids 2018-2019');
-     Map.addLayer(centroidLayers[2019], {color: 'yellow'}, 'Centroids 2019-2020');
-     Map.addLayer(centroidLayers[2020], {color: 'yellow'}, 'Centroids 2020-2021');
-     Map.addLayer(centroidLayers[2021], {color: 'yellow'}, 'Centroids 2021-2022');
-     Map.addLayer(centroidLayers[2022], {color: 'yellow'}, 'Centroids 2022-2023');
-
-
-
-      break;
-    case 'Barren Centers':
-      //clearChart();
-      var description = ui.Label('The red dots identified are the projected building complexes in Israel.');
-      currentWidgets.push(description);
-      resetYearselector();
-      Map.addLayer(centroidLayers[2017], {color: 'yellow'}, 'Centroids 2017-2018');
-      Map.addLayer(centroidLayers[2018], {color: 'yellow'}, 'Centroids 2018-2019');
-      Map.addLayer(centroidLayers[2019], {color: 'yellow'}, 'Centroids 2019-2020');
-      Map.addLayer(centroidLayers[2020], {color: 'yellow'}, 'Centroids 2020-2021');
-      Map.addLayer(centroidLayers[2021], {color: 'yellow'}, 'Centroids 2021-2022');
-      Map.addLayer(centroidLayers[2022], {color: 'yellow'}, 'Centroids 2022-2023');
-
-      //classifyAndVisualizeCenters(savi_2017_2023, year, year + 1, 100);
+      Map.addLayer(centroidLayers[yearSlider.getValue()], {color: 'F2B33D'}, 'Centroids' + yearSlider.getValue() +"-"+ endYear);
       break;
   }
 
@@ -858,8 +1128,8 @@ ui.root.add(infoPanel);
 var errorMatrix = validated.errorMatrix('class', 'classification');
 
 // Default display of the initial year's layer
-updateMapLayers('SAVI');
-layerSelect.setValue('SAVI', true);
+updateMapLayers('West Bank Border');
+layerSelect.setValue('West Bank Border', true);
 
 // Function to update or clear chart based on current layer
 // Calculate the number of pixels with SAVI=1 for each year from 2017 to 2023 and add a line chart to the existing panel
@@ -926,8 +1196,8 @@ function removeChart() {
 }
 
 function updateChart(year) {
+  removeChart();
   var selectedYearImage = ee.Image(savi_2017_2023.get(year.toString()));
-
   // Create masks for SAVI values 0 and 1
   var mask0 = selectedYearImage.eq(0);
   var mask1 = selectedYearImage.eq(1);
@@ -980,53 +1250,228 @@ function clearChart() {
 
 // Slider event handling
 yearSlider.onSlide(function(value) {
-  yearLabel.setValue('Current Year: ' + value);
+  
+  yearLabel.setValue('Chozen Year: ' + value);
+  // Retrieve the differential image for the selected year and the next year.
 
-  // Updates the current layer, which may affect charts, map layers, and descriptions
-  updateMapLayers(currentLayer);
-
+  handleLayerChange(currentLayer);
+  
   // If the current layer requires a specific description, it is handled here
-  if (currentLayer === 'SAVI') {
+  if (currentLayer === 'West Bank Border') {
+    updateDescriptionForWestBankBorder();
+  } else if (currentLayer === 'SAVI') {
     updateChart(value); // Update chart only if SAVI is currently selected
     updateDescriptionForSAVI();
   } else if (currentLayer === 'Change detection') {
+
+    updatePieChart(diffimage, activeGeometry);
+    //updateChangeChart(diffImages, activeGeometry);
+    //panel.widgets().set(8, diffchart);
+    //updateLineChart(diffImages, activeGeometry);
     updateDescriptionForChangeDetection();
+    if(!layerSelect){panel.add(layerSelect);}
   } else if (currentLayer === 'Predicted Israeli Architectural Complex') {
     updateDescriptionForPredictedIsraeliArchitecturalComplex();
-  } else if (currentLayer === 'Built-Up Centers' || currentLayer === 'Barren Centers') {
+  } else if (currentLayer === 'New Israeli Building Clusters') {
     updateDescriptionForCenters();
+    displayCentroidScatter(results.centroidLayers, yearSlider.getValue());
   }
+
 });
 
 // Helper functions to manage descriptions for different layers
+function updateDescriptionForWestBankBorder() {
+  clearDescriptions();
+    // New Israeli Settlement Identification
+    var boldText = ui.Label({
+      value: 'New Israeli Settlement Identification In The West Bank',
+      style: {fontWeight: 'bold', fontSize: '14px'}
+    });
+    panel.add(boldText); 
+
+    // Description 1
+    var description1 = ui.Label({
+      value: 'Users can explore different contents through the tabs on the upper left, and detailed descriptions will be presented on the corresponding pages. In addition to directly querying new Israeli settlements, the app also visualizes the entire analysis process. Users are free to explore what is happening at each step.',
+      style:{fontSize:'12px'}
+    });
+    panel.add(description1);  
+    
+    var link = ui.Label({
+      value: 'For more information:  https://www.aljazeera.com/news/2021/5/18/mapping-israeli-occupation-gaza-palestine',
+      style:{fontSize:'12px',color: '000129'}
+    })
+    panel.add(link);
+    
+    // Instructions
+    var title1 = ui.Label({
+      value: 'Instructions:',
+      style: {fontWeight: 'bold', fontSize: '12px'}  
+    });
+    panel.add(title1);
+    
+    var instruction = ui.Label({
+      value:'We can toggle between layers using the “Layers” button in the top right corner of the map. Blue represents the Palestinian-controlled areas, red represents the Palestinian-Israeli controlled areas, and the rest of the West Bank is under full Israeli control.',
+      style:{fontSize:'12px'}
+    });
+    panel.add(instruction);
+    
+    var note = ui.Label({
+      value:'We can explore different contents through the tabs on the upper left, and detailed descriptions will be presented on the corresponding pages. In addition to directly querying new Israeli settlements, the app also visualizes the entire analysis process. ',
+      style:{fontSize:'12px'}
+    });
+    panel.add(note);
+    
+    currentWidgets.push(boldText,description1,link,title1,instruction,note);
+}
+
 function updateDescriptionForSAVI() {
   clearDescriptions();
-  var description = ui.Label('Through SAVI, we can find all the bare land stocks in the corresponding year. Zooming in on the image we can see plots of different sizes and shapes. After excluding fragmented farmland and huge areas of desert, the large-scale plots are likely to be new construction sites.');
-  panel.add(description);
-  // Add the button to the UI Panel
-  panel.add(toggleRegionButton);
-  currentWidgets.push(description,toggleRegionButton);
+    var title1 = ui.Label({
+      value: 'Purpose:',
+      style: {fontWeight: 'bold', fontSize: '12px'}  
+    });
+    panel.add(title1);
+    
+    var Purpose = ui.Label({
+      value:'Israeli outposts and early settlements often appear as bare land. Based on this characteristic, SAVI can efficiently and accurately identify target lands, outperforming machine learning in both speed and accuracy.',
+      style:{fontSize:'12px'}
+    });
+    panel.add(Purpose);
+    
+    // Note
+    var title2 = ui.Label({
+      value: 'Instructions: ',
+      style: {fontWeight: 'bold', fontSize: '12px'}  
+    });
+    panel.add(title2);
+    
+    var instruction = ui.Label({
+      value:'By dragging the slider, users can view the identification results for different years. Although not the direct purpose of this application, we also provide visualization of the SAVI index to help users understand the trends in bare land changes and the proportions in different years.',
+      style:{fontSize:'12px'}
+    });
+    panel.add(instruction);
+    
+    var description = ui.Label({
+      value:'The image is presented in red and black, with red representing our target identified lands. After zooming and moving the image, users can see some clear lines and shapes emerging. Lines indicate unhardened roads, and shapes represent bare land. These likely correspond to the early Israeli settlements.',
+      style:{fontSize:'12px'}
+    });
+    panel.add(description);
+    
+    currentWidgets.push(title1,Purpose,title2,instruction,description);
 }
 
 function updateDescriptionForChangeDetection() {
   clearDescriptions();
-  var description = ui.Label('We can zoom in to see if there are any new roads under construction. If we notice a continuous red line, it is highly likely that this road is newly built.');
-  panel.add(description);
-  currentWidgets.push(description);
+    var title1 = ui.Label({
+      value: 'Purpose:',
+      style: {fontWeight: 'bold', fontSize: '12px'}  
+    });
+    panel.add(title1);
+    
+    var Purpose = ui.Label({
+      value:'SAVI detection results include existing bare land and extensive permanent deserts. The application aims to identify new settlements, thus necessitating the exclusion of these perennially bare areas. By calculating the difference between SAVI images from consecutive years, we can isolate the changed areas.',
+      style:{fontSize:'12px'}
+    });
+    panel.add(Purpose);
+    
+    var title2 = ui.Label({
+      value: 'Instructions: ',
+      style: {fontWeight: 'bold', fontSize: '12px'}  
+    });
+    panel.add(title2);
+    
+    var instruction = ui.Label({
+      value:'We can zoom in to see if there are any new roads under construction. If we notice a continuous red line, it is highly likely that this road is newly built.',
+      style:{fontSize:'12px'}
+    });
+    panel.add(instruction);
+
+    panel.add(toggleRegionButton);  
+    currentWidgets.push(title1,Purpose,title2,instruction,toggleRegionButton);
 }
 
 function updateDescriptionForPredictedIsraeliArchitecturalComplex() {
   clearDescriptions();
-  var description = ui.Label('The red dots identified are the projected building complexes in Israel.');
-  panel.add(description);
-  currentWidgets.push(description);
+    var title1 = ui.Label({
+      value: 'Purpose:',
+      style: {fontWeight: 'bold', fontSize: '12px'}  
+    });
+    panel.add(title1);
+    
+    var Purpose = ui.Label({
+      value: 'After identifying the coordinates of all target type land, it is necessary to distinguish land ownership. Directly labeling bare land is inefficient and challenging, so we utilize a novel approach using historical satellite images. While bare land in Israel lacks distinctive features, Israeli buildings significantly differ from those in Palestine. Historical images of locations with Israeli buildings will inevitably show bare land. By labeling and classifying these buildings, we can attribute the land to Israeli ownership.',
+      style:{fontSize:'12px'}
+    });
+    panel.add(Purpose);
+    
+    var title2 = ui.Label({
+      value: 'Instructions: ',
+      style: {fontWeight: 'bold', fontSize: '12px'}  
+    });
+    panel.add(title2);
+    
+    var description1 = ui.Label({
+      value:'The image on the right, where red indicates the predicted Israeli building clusters.',
+      style:{fontSize:'12px'}
+    });
+    panel.add(description1);
+    
+    var description2 = ui.Label({
+      value:'The table on the left is the confusion matrix of the classification results. ',
+      style:{fontSize:'12px'}
+    });
+    panel.add(description2);    
+    
+    var description3 = ui.Label({
+      value:'Class 1 is Israel building clusters. ',
+      style:{fontSize:'12px'}
+    });
+    panel.add(description3);        
+
+    var description4 = ui.Label({
+      value:'Class 2 is Palestinian building clusters.',
+      style:{fontSize:'12px'}
+    });
+    panel.add(description4);        
+
+    var description5 = ui.Label({
+      value:'Class 3 is the desert areas.',
+      style:{fontSize:'12px'}
+    });
+    panel.add(description5);   
+    var description6 = ui.Label({
+      value:'The accuracy is quite high, at around 90%. In detail, the model performs best when predicting desert regions, followed by Israeli building clusters. Confusion primarily occurs between Israeli and Palestinian building clusters, as well as between Israeli building clusters and desert regions.',
+      style:{fontSize:'12px'}
+    });
+    panel.add(description6);   
+
+    currentWidgets.push(title1,Purpose,title2,description1,description2,description3,description4,description5,description6);
 }
 
 function updateDescriptionForCenters() {
   clearDescriptions();
-  var description = ui.Label('Through this view, we can analyze the urban development over the years.');
-  panel.add(description);
-  currentWidgets.push(description);
+
+    // Description 1
+    var description1 = ui.Label({
+      value:'We can use the slider on the upper left to switch between different years to view the distribution of recognition results. The left panel provides a visualization of the current year and the trend of changes to facilitate user data query.',
+      style:{fontSize:'12px'}
+    });
+    panel.add(description1);  
+    
+    // Instructions
+    var title1 = ui.Label({
+      value: 'Note:',
+      style: {fontWeight: 'bold', fontSize: '12px'}  
+    });
+    panel.add(title1);
+    
+    var note = ui.Label({
+      value:'By filtering the shapes and areas within the change detection results, the application extracts the centroids of various geometric shapes corresponding to Israeli settlements established in different years. Given the broad span of years, users can observe that some settlements have developed into towns. Users can toggle between years to view the latest settlements or those that have been fully established. Due to limitations in the filtering logic, some desert changes and agricultural land transformations are not fully filtered out. In the future, new methods will be sought to optimize accuracy.',
+      style:{fontSize:'12px'}
+    });
+    panel.add(note);
+
+    currentWidgets.push(description1,title1,note);
 }
 
 // Function to clear previously added descriptions
@@ -1041,27 +1486,330 @@ function clearDescriptions() {
 function displayConfusionMatrix(errorMatrix) {
   // Clear previously added widgets from the panel
   currentWidgets.forEach(function(widget) {
-        panel.remove(widget);
-    });
+    panel.remove(widget);
+  });
   currentWidgets = [];  // Reset the array after clearing
+
   var matrixArray = errorMatrix.array();
+  // Define custom labels for the matrix categories
+  var labels = ['Israel', 'Palestine', 'Joint Administration'];
+
   var matrixChart = ui.Chart.array.values({
     array: matrixArray,
     axis: 0,
-    xLabels: errorMatrix.order()
+    xLabels: labels  // Use descriptive labels for the x-axis
   }).setChartType('Table').setOptions({
     title: 'Confusion Matrix',
-    hAxis: {title: 'Predicted Label'},
-    vAxis: {title: 'Actual Label'},
+    hAxis: {
+      title: 'Predicted Label',
+      ticks: labels.map(function(label, index) { return {v: index, f: label}; })  // Custom tick labels
+    },
+    vAxis: {
+      title: 'Actual Label',
+      ticks: labels.map(function(label, index) { return {v: index, f: label}; })  // Custom tick labels
+    },
     colors: ['yellow', 'red', 'green']
   });
 
-  // Add chart description
-  var description = ui.Label('The red dots identified are the projected building complexes in Israel.');
-  //panel.clear();  // Clear previous elements in the panel
-  panel.add(description);  // Add the description
   panel.add(matrixChart);  // Display the chart
-  currentWidgets.push(description, matrixChart);  // Store references to remove later
+  currentWidgets.push(matrixChart);  // Store references to remove later
+}
+
+function updatePieChart(diffImage, geometry) {
+  currentWidgets.forEach(function(widget) {
+        panel.remove(widget);
+    });
+  currentWidgets = [];  // Reset the array after clearing
+  var stats = diffImage.reduceRegion({
+    reducer: ee.Reducer.frequencyHistogram(),
+    geometry: geometry,
+    scale: 30,
+    maxPixels: 1e9
+  });
+  console.log(diffimage);
+  // Asynchronously evaluate the histogram calculation
+  stats.evaluate(function(result) {
+    if (result.SAVI) {
+      var data = [['Change Type', 'Area']];
+      var totalIncreased = result.SAVI['1'] || 0; // Ensure default if undefined
+      var totalDecreasedUnchanged = result.SAVI['0'] || 0; // Ensure default if undefined
+      data.push(['Increased', totalIncreased]);
+      data.push(['Decreased/Unchanged', totalDecreasedUnchanged]);
+
+      // Create the chart directly from the array
+      var chart = ui.Chart(data)
+        .setChartType('PieChart')
+        .setOptions({
+          title: 'Proportion of SAVI Change' + yearSlider.getValue(),
+          slices: {
+            0: {color: 'red'},  // Decreased or unchanged
+            1: {color: 'green'} // Increased
+          },
+          pieSliceText: 'percentage',
+          is3D: true,
+          fontSize: 12
+        });
+      // Replace or add the chart in the UI panel
+      if (panel.widgets().length() > 2) {
+        panel.widgets().set(7, chart); // Assume the second position for the chart
+        //panel.widgets().set(8,changeChart);
+        currentWidgets.push(chart);
+      }
+    } else {
+      console.log("No data available for the specified range.");
+    }
+  });
+
+  updateChangeChart(diffImages, activeGeometry);
+  //console.log(panel);
+}
+
+var diffchart
+// Function to update the line chart for SAVI changes over the years
+function updateChangeChart(diffImages, geometry) {
+  // Collect data for each year and compute changes
+  var changeData = ee.List([]);
+  var years = ['2017_2018', '2018_2019', '2019_2020', '2020_2021', '2021_2022', '2022_2023'];
+
+  years.forEach(function(year) {
+    var diffImage = ee.Image(diffImages.get(year));
+    var stats = diffImage.reduceRegion({
+      reducer: ee.Reducer.frequencyHistogram(),
+      geometry: geometry,
+      scale: 30,
+      maxPixels: 1e9
+    }).get('SAVI');
+
+    var data = ee.Dictionary(stats);
+    var increased = data.getNumber('1').getInfo();
+    var decreasedUnchanged = data.getNumber('0').getInfo();
+    
+    changeData = changeData.add(ee.Feature(null, {
+      'year': year,
+      'increased': increased,
+      'decreasedUnchanged': decreasedUnchanged
+    }));
+  });
+
+  // Convert list to feature collection for charting
+  var changeFc = ee.FeatureCollection(changeData);
+
+  // Create and display the chart
+  var changeChart = ui.Chart.feature.byFeature({
+    features: changeFc,
+    xProperty: 'year',
+    yProperties: ['increased', 'decreasedUnchanged']
+  }).setOptions({
+    title: 'Yearly Difference',
+    vAxis: {title: 'Pixel Count'},
+    hAxis: {title: 'Year'},
+    lineWidth: 1,
+    series: {
+      0: {color: 'green'},  // SAVI increased
+      1: {color: 'red'}     // SAVI decreased or unchanged
+    }
+  });
+  //diffchart = changeChart;
+
+  // Check if a chart already exists in the UI, replace or add
+ 
+    panel.widgets().add(changeChart);
+    currentWidgets.push(diffchart);
+
+  //console.log(panel);
+}
+
+function displayChangeHistogram(yearlyImages, year, geometry) {
+    var currentImage = ee.Image(yearlyImages.get(year.toString()));
+    var nextImage = ee.Image(yearlyImages.get((parseInt(year) + 1).toString()));
+    
+    var transitionToRed = currentImage.gte(0.2).and(nextImage.lt(0.2));
+    var filteredChange = filterSmallPatches(transitionToRed, 100);
+    
+    var areaHistogram = filteredChange.reduceRegion({
+        reducer: ee.Reducer.frequencyHistogram(),
+        geometry: geometry,
+        scale: 30,
+        maxPixels: 1e9
+    });
+
+    areaHistogram.evaluate(function(result) {
+        var chart = ui.Chart.array.values({
+            array: Object.values(result.SAVI),
+            axis: 0,
+            xLabels: Object.keys(result.SAVI)
+        }).setOptions({
+            title: 'Distribution of Change Areas for ' + year,
+            vAxis: {title: 'Frequency'},
+            hAxis: {title: 'Area Size (pixels)'},
+            series: {0: {color: 'red'}}
+        });
+
+        // Display chart
+        if (panel.widgets().length() > 5) {
+            panel.widgets().set(5, chart);
+        } else {
+            panel.add(chart);
+        }
+    });
+}
+
+console.log(centroidLayers);
+
+function displayCentroidScatter(centroidLayers, year) {
+    var centroids = centroidLayers[year];
+    
+    var centroidChart = ui.Chart.feature.byFeature(centroids, 'longitude', ['latitude'])
+        .setChartType('ScatterChart')
+        .setOptions({
+            title: 'Centroids of Changed Areas in ' + year,
+            hAxis: {title: 'Longitude'},
+            vAxis: {title: 'Latitude'},
+            pointSize: 5,
+            colors: ['yellow']  // Points in yellow
+        });
+
+    // Display chart
+    if (panel.widgets().length() > 2) {
+        panel.widgets().add(centroidChart);
+    } else {
+        panel.add(centroidChart);
+    }
+    countAndChartCentroids(centroidLayers);
+}
+
+
+//Create an information panel to display feature attributes, and set it to not be displayed initially
+var infoPanel = ui.Panel({
+   style: {
+     position: 'bottom-left',
+     width: '300px',
+     maxHeight: '400px',
+     padding: '8px',
+     backgroundColor: 'white',
+     shown: false //Initially set to not show
+   }
+});
+
+//Create a switch button to control the display and hiding of the information panel
+var infotoggleButton = ui.Button({
+   label: 'Show/hide Region information',
+   onClick: function() {
+     //Switch the display state of the information panel
+     var shown = infoPanel.style().get('shown');
+     infoPanel.style().set('shown', !shown);
+     infotoggleButton.setLabel(shown ? 'Show Region info' : 'Hide Region info');
+   },
+   style: {
+     padding: '0',
+     margin: '0',
+     backgroundColor: '#ffffff00', // Completely transparent background
+     color: '#000000', //Set the text color to black, which can be changed as needed
+     fontSize: '12px', // Font size, can be adjusted as needed
+     border: '0px solid' // Remove border
+   }
+});
+
+
+//Define a function to update the panel to display the clicked characteristic attributes when the map is clicked.
+function showFeatureInfo(coords) {
+   var point = ee.Geometry.Point([coords.lon, coords.lat]);
+   var feature = westbank.filterBounds(point).first();
+
+   feature.evaluate(function(feature) {
+     if (feature) {
+       // Clear old attribute information
+       infoPanel.clear();
+
+       // Iterate through the properties of the feature, create a UI element for each property and add it to the panel
+       var table = ui.Panel({
+         layout: ui.Panel.Layout.flow('vertical'),
+         style: {margin: '0 -8px'}
+       });
+
+       Object.keys(feature.properties).forEach(function(key) {
+         var value = feature.properties[key];
+         var row = ui.Panel({
+           layout: ui.Panel.Layout.flow('horizontal'),
+           style: {
+             border: '1px solid black',
+             textAlign: 'left',
+             padding: '2px'
+           }
+         });
+
+         var labelKey = ui.Label({
+           value: key + ':',
+           style: {margin: '0 4px', fontWeight: 'bold', width: 'auto', padding: '2px'}
+         });
+
+         var labelValue = ui.Label({
+           value: value.toString(),
+           style: {margin: '0 4px', width: 'auto', padding: '2px'}
+         });
+
+         row.add(labelKey);
+         row.add(labelValue);
+         table.add(row);
+       });
+
+       infoPanel.add(table);
+     }
+   });
+}
+
+//Set the map click event listener
+Map.onClick(showFeatureInfo);
+
+//Create a panel to hold the information panel and switch button
+var mappanel = ui.Panel({
+   layout: ui.Panel.Layout.flow('vertical'),
+   style: {position: 'bottom-left'}
+});
+
+//Add buttons and information panels to the panel
+mappanel.add(infotoggleButton);
+mappanel.add(infoPanel);
+
+// Finally, add the panel to the map's sidebar
+Map.add(mappanel);
+
+function countAndChartCentroids(centroidLayers) {
+  var years = ee.List.sequence(2017, 2022);
+  var chartData = [];
+
+  // Helper function to handle asynchronous retrieval of size
+  function processYear(yearIndex) {
+    if (yearIndex < years.length().getInfo()) { // Check if there are more years to process
+      var year = years.get(yearIndex).getInfo(); // Get the year as a number
+      var centroids = centroidLayers[year];
+      if (centroids) {
+        centroids.size().evaluate(function(size) {
+          console.log('Year: ' + year + ', Count: ' + size); // Log the count
+          chartData.push({year: year, count: size}); // Push the data to the chart data array
+          processYear(yearIndex + 1); // Recursively process the next year
+        });
+      } else {
+        console.log('Year: ' + year + ', Count: 0'); // Log and handle undefined years
+        chartData.push({year: year, count: 0}); // Push zero count
+        processYear(yearIndex + 1); // Recursively process the next year
+      }
+    } else {
+      // All years have been processed, now create and print the chart
+      chartData = chartData.sort(function(a, b) { return a.year - b.year; }); // Sort the chart data
+      var chart = ui.Chart.array.values(chartData.map(function(item) { return item.count; }), 0, chartData.map(function(item) { return item.year; }))
+        .setChartType('ColumnChart')
+        .setOptions({
+          title: 'Number of Centroids Per Year',
+          hAxis: {title: 'Year'},
+          vAxis: {title: 'Number of Centroids'},
+          legend: {position: 'none'}
+        });
+      panel.widgets().add(chart);
+      currentWidgets.push(chart);
+    }
+  }
+  processYear(0); // Start processing from the first year
 }
 
 // ---------------------------------------------------------------------------------
