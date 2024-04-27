@@ -578,8 +578,7 @@ Additionally, the panel includes a slider for selecting years, which influences 
 
 These controls are dynamically managed through written functions, such as showing and hiding specific controls, updating map layers, or handling map click events, thereby enhancing user interaction.
 
-![UI Panel](images/UI-1.png)
-![UI Panel](images/UI-2.png)
+![UI Panel](images/UI.jpg)
 
 
 ```js
