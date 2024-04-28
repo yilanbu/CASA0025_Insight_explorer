@@ -170,7 +170,7 @@ Map.addLayer(buffered_geometry, {color: 'yellow'}, 'Study Area',false);
 ```
 
 
-For the purpose of machine learning training in part 4, we need to increase the amount of data, so two functions are defined: one calculates SAVI, and the other retrieves yearly Sentinel-2 images for analysis over time.
+In order to use machine learning (ML) in part 4, we need to increase the amount of data, so two functions are defined: one calculates SAVI, and the other retrieves yearly Sentinel-2 images for the analysis over time.
 
 
 ```js
