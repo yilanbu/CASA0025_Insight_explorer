@@ -254,6 +254,7 @@ keys.getInfo().forEach(function(key) {
 // ---------------------------------------------------------------------------------
 ```
 
+![part1](images/part1.jpg)
 
 
 ### Part 2: Change detection
@@ -294,6 +295,9 @@ for (var i = 2017; i < 2023; i++) {
 // ---------------------------------------------------------------------------------
 ```
 
+![part2](images/part2.jpg)
+
+We tried various methods to handle the differences between the images, and eventually settled on directly applying subtraction, as it preserves the most changes without being filtered out. Otherwise, we wouldn't be able to detect where new roads have appeared.
 
 
 ### Part 3: Change filter
@@ -409,6 +413,10 @@ Map.addLayer(centroidLayers[2022], {color: 'yellow'}, 'Centroids 2022-2023');
 // ---------------------------------------------------------------------------------
 ```
 
+![part3](images/part3.jpg)
+![part3_2](images/part3_2.jpg)
+
+We can use statistical analysis to observe the distribution of suspected new Israeli settlement developments each year.
 
 
 ### Part 4: Use Machine Learning to Identify the Building Clusters of Israel
@@ -568,6 +576,7 @@ However, during the annotation and recognition process, we made an unexpected di
 
 Therefore, we did not use the part4 results for filtering, and we believed that the points obtained by part3 were sufficient for users. These points include only Israel and the desert, with the desert concentrated on the east side and easily distinguishable by the human eye. Applying part4 filtering may result in correct objects being excluded, which is less acceptable than deserts being included.
 
+![part4](images/part4.jpg)
 
 
 ### Part 5: Create UI Panel
